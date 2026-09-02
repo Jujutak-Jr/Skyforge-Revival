@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Skyforge Revival</title>
-<meta name="description" content="Skyforge Revival – Fan-betriebener Server-Emulator für das MMORPG Skyforge. Videos, Infos, Installation und Account-Erstellung.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%92%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Skyforge Revival – a fan-run private server emulator for the MMORPG Skyforge. Videos, info, installation guide and account creation.">
+<link rel="icon" type="image/png" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -100,9 +100,14 @@
     text-decoration:none;
   }
   .brand svg{flex-shrink:0;}
+  .brand-logo{
+    width:30px; height:30px;
+    object-fit:contain;
+    flex-shrink:0;
+  }
   .nav-links{
     display:flex;
-    gap:clamp(14px,2.4vw,28px);
+    gap:clamp(14px,2.4vw,26px);
     list-style:none;
     margin:0;
     padding:0;
@@ -134,9 +139,12 @@
     position:relative;
     overflow:hidden;
     border-bottom:1px solid var(--border);
-    background:
-      radial-gradient(ellipse 70% 60% at 50% -10%, rgba(139,122,209,.22), transparent 60%),
-      linear-gradient(180deg, var(--bg-2), var(--bg));
+    background-image:
+      radial-gradient(ellipse 70% 60% at 50% -10%, rgba(139,122,209,.28), transparent 60%),
+      linear-gradient(180deg, rgba(10,11,18,.72), var(--bg) 88%),
+      url("https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/414530/ss_4516bb711b774831335c6e402cd35faf2de83dca.1920x1080.jpg");
+    background-size:cover;
+    background-position:center 30%;
   }
   #hero-canvas{
     position:absolute;
@@ -190,7 +198,7 @@
   .btn:active{transform:translateY(1px);}
   .btn-primary{background:var(--gold); color:#161116; border-color:var(--gold);}
   .btn-primary:hover, .btn-primary:focus-visible{filter:brightness(1.12);}
-  .btn-ghost{background:transparent; color:var(--text); border-color:var(--border);}
+  .btn-ghost{background:rgba(10,11,18,.5); color:var(--text); border-color:var(--border);}
   .btn-ghost:hover, .btn-ghost:focus-visible{border-color:var(--celestial); color:var(--gold-bright);}
   .btn:disabled{opacity:.5; cursor:not-allowed; filter:none;}
 
@@ -201,11 +209,12 @@
     justify-content:center;
     font-family:var(--font-mono);
     font-size:.74rem;
-    color:var(--text-faint);
+    color:var(--text-dim);
     letter-spacing:.03em;
   }
   .hero-tags span{
     border:1px solid var(--border);
+    background:rgba(10,11,18,.5);
     padding:4px 10px;
     border-radius:100px;
   }
@@ -230,6 +239,14 @@
   }
 
   /* ---------- ABOUT / STATUS ---------- */
+  #about{
+    position:relative;
+    background-image:
+      linear-gradient(180deg, var(--bg) 0%, rgba(10,11,18,.93) 100%),
+      url("https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/414530/ss_b32def2bae009da9ff8c54d986e5d087c71fcf9f.1920x1080.jpg");
+    background-size:cover;
+    background-position:center 35%;
+  }
   .about-grid{
     display:grid;
     grid-template-columns:1.3fr 1fr;
@@ -241,7 +258,8 @@
   .about-copy strong{color:var(--text);}
 
   .status-panel{
-    background:var(--surface);
+    background:rgba(21,23,38,.92);
+    backdrop-filter:blur(6px);
     border:1px solid var(--border);
     border-radius:4px;
     overflow:hidden;
@@ -303,6 +321,47 @@
   .video-meta .eyebrow{margin-bottom:6px; display:block;}
   .video-meta h3{font-size:1.05rem; color:var(--text); margin-bottom:6px;}
   .video-meta p{color:var(--text-dim); font-size:.9rem;}
+
+  /* ---------- GALLERY ---------- */
+  .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+    gap:16px;
+  }
+  .gallery-item{
+    position:relative;
+    aspect-ratio:4/3;
+    border-radius:4px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    background:var(--surface);
+  }
+  .gallery-item img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+    transition:transform .4s ease;
+  }
+  .gallery-item:hover img{transform:scale(1.05);}
+  .gallery-item::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 55%, rgba(10,11,18,.75));
+    pointer-events:none;
+  }
+  .gallery-item span{
+    position:absolute; left:12px; bottom:10px; z-index:1;
+    font-family:var(--font-mono);
+    font-size:.7rem;
+    letter-spacing:.04em;
+    color:var(--text-dim);
+  }
+  .gallery-credit{
+    margin-top:14px;
+    font-family:var(--font-mono);
+    font-size:.7rem;
+    color:var(--text-faint);
+  }
 
   /* ---------- FEATURES ---------- */
   .feature-grid{
@@ -481,19 +540,17 @@
 <header class="nav">
   <div class="nav-inner">
     <a class="brand" href="#top">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M12 2 L20 7 V17 L12 22 L4 17 V7 Z" stroke="#c99a52" stroke-width="1.4"/>
-        <path d="M12 2 V22 M4 7 L20 17 M20 7 L4 17" stroke="#8b7ad1" stroke-width=".6" opacity=".6"/>
-      </svg>
+      <img class="brand-logo" src="logo.png" alt="Skyforge Revival logo">
       SKYFORGE REVIVAL
     </a>
     <ul class="nav-links">
-      <li><a href="#about">Über das Projekt</a></li>
+      <li><a href="#about">About</a></li>
       <li><a href="#videos">Videos</a></li>
+      <li><a href="#gallery">Gallery</a></li>
       <li><a href="#features">Features</a></li>
       <li><a href="#install">Installation</a></li>
     </ul>
-    <a class="nav-cta" href="#account">Account erstellen</a>
+    <a class="nav-cta" href="#account">Create Account</a>
   </div>
 </header>
 
@@ -501,17 +558,17 @@
   <section class="hero">
     <canvas id="hero-canvas" aria-hidden="true"></canvas>
     <div class="container hero-content">
-      <span class="eyebrow">Fan-betriebener Server-Emulator</span>
-      <h1>Steig auf. Werde ein Gott. <span class="accent">Erneut.</span></h1>
-      <p class="hero-sub">Skyforge Revival bringt das gefallene Science-Fantasy-MMO zurück auf den Planeten Aelion. Ein Community-Projekt, das den originalen Aufstieg zur Göttlichkeit als privaten Server-Emulator neu aufbaut.</p>
+      <span class="eyebrow">Fan-Run Server Emulator</span>
+      <h1>Ascend. Become a god. <span class="accent">Again.</span></h1>
+      <p class="hero-sub">Skyforge Revival brings the fallen science-fantasy MMO back to the planet Aelion. A community project rebuilding the original path to godhood as a private server emulator.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#account">Account erstellen</a>
-        <a class="btn btn-ghost" href="#videos">Videos ansehen</a>
+        <a class="btn btn-primary" href="#account">Create Account</a>
+        <a class="btn btn-ghost" href="#videos">Watch Videos</a>
       </div>
       <div class="hero-tags">
-        <span>Inoffizielles Fan-Projekt</span>
+        <span>Unofficial Fan Project</span>
         <span>PC · Windows</span>
-        <span>In Entwicklung</span>
+        <span>In Development</span>
       </div>
     </div>
   </section>
@@ -519,20 +576,20 @@
   <section id="about">
     <div class="container about-grid">
       <div class="about-copy">
-        <span class="eyebrow">Über Skyforge Revival</span>
-        <h2 style="margin:10px 0 18px;">Ein totes MMO, von der Community wiederbelebt</h2>
-        <p><strong>Skyforge</strong> war ein Science-Fantasy-MMORPG, in dem Spieler als Unsterbliche auf dem Planeten <strong>Aelion</strong> gegen Invasoren kämpfen und sich über das Aufstiegssystem zur Göttlichkeit hocharbeiten. Nach der Einstellung der offiziellen Server ist das Spiel für Neu- und Bestandsspieler nicht mehr erreichbar.</p>
-        <p><strong>Skyforge Revival</strong> ist ein von Fans entwickelter Server-Emulator, der die Spielwelt, Klassen und Progression des Originals nachbildet, damit die Community weiterspielen kann. Das Projekt wird unabhängig und nicht-kommerziell betrieben.</p>
-        <p>Alle Inhalte, Fortschritte und Zeitpläne befinden sich aktuell in aktiver Entwicklung – Details dazu findest du im Status-Panel und im Installationsbereich weiter unten.</p>
+        <span class="eyebrow">About Skyforge Revival</span>
+        <h2 style="margin:10px 0 18px;">A Dead MMO, Revived by Its Community</h2>
+        <p><strong>Skyforge</strong> was a science-fantasy MMORPG in which players took on the role of Immortals, fighting invaders on the planet <strong>Aelion</strong> and climbing the game's ascension system toward godhood. After the official servers shut down, the game became unreachable for new and returning players alike.</p>
+        <p><strong>Skyforge Revival</strong> is a fan-built server emulator that recreates the original world, classes, and progression so the community can keep playing. The project is run independently and non-commercially.</p>
+        <p>All content, progress, and timelines are currently in active development — see the status panel and the installation section below for details.</p>
       </div>
       <div class="status-panel">
-        <div class="status-panel-head"><span class="status-dot"></span> Projektstatus</div>
+        <div class="status-panel-head"><span class="status-dot"></span> Project Status</div>
         <dl class="status-rows">
-          <div class="status-row"><dt>Phase</dt><dd>In Entwicklung</dd></div>
-          <div class="status-row"><dt>Plattform</dt><dd>PC (Windows)</dd></div>
-          <div class="status-row"><dt>Basis</dt><dd>Skyforge Client</dd></div>
-          <div class="status-row"><dt>Kosten</dt><dd>Kostenlos</dd></div>
-          <div class="status-row"><dt>Träger</dt><dd>Community</dd></div>
+          <div class="status-row"><dt>Phase</dt><dd>In Development</dd></div>
+          <div class="status-row"><dt>Platform</dt><dd>PC (Windows)</dd></div>
+          <div class="status-row"><dt>Base</dt><dd>Skyforge Client</dd></div>
+          <div class="status-row"><dt>Cost</dt><dd>Free</dd></div>
+          <div class="status-row"><dt>Run by</dt><dd>Community</dd></div>
         </dl>
       </div>
     </div>
@@ -543,29 +600,29 @@
   <section id="videos">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">Bewegtbild</span>
-        <h2>Skyforge in Aktion</h2>
-        <p>Drei Einblicke aus der Originalversion des Spiels – vom ersten Login bis zum Raid gegen einen Weltenfeind.</p>
+        <span class="eyebrow">Watch</span>
+        <h2>Skyforge in Action</h2>
+        <p>Three glimpses of the original game — from your first login to a raid against a world boss.</p>
       </div>
       <div class="video-grid">
         <article class="video-card">
           <div class="video-frame">
-            <iframe src="https://www.youtube.com/embed/PH3UsFNyPRo" title="Skyforge Einsteiger-Guide" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/PH3UsFNyPRo" title="Skyforge Beginner Guide" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
           <div class="video-meta">
-            <span class="eyebrow">Einsteiger-Guide</span>
-            <h3>Der erste Aufstieg</h3>
-            <p>Klassen, Grundlagen und die ersten Schritte auf Aelion – ideal, wenn du neu einsteigst.</p>
+            <span class="eyebrow">Beginner Guide</span>
+            <h3>Your First Ascension</h3>
+            <p>Classes, basics, and your first steps on Aelion — perfect if you're just getting started.</p>
           </div>
         </article>
         <article class="video-card">
           <div class="video-frame">
-            <iframe src="https://www.youtube.com/embed/HxWVYdnBZvw" title="Skyforge Gameplay Überblick" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/HxWVYdnBZvw" title="Skyforge Gameplay Overview" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
           <div class="video-meta">
             <span class="eyebrow">Gameplay</span>
-            <h3>Überblick vom Start weg</h3>
-            <p>Kampfsystem, Erkundung und Weltgeschehen im Zusammenspiel – ein kompletter Rundgang.</p>
+            <h3>A Full Overview</h3>
+            <p>Combat, exploration, and the wider world working together — a complete walkthrough.</p>
           </div>
         </article>
         <article class="video-card">
@@ -574,8 +631,8 @@
           </div>
           <div class="video-meta">
             <span class="eyebrow">Endgame</span>
-            <h3>Raid gegen einen Weltenfeind</h3>
-            <p>Koordinierter Gruppenkampf im Endgame – zeigt, wohin dein Aufstieg letztlich führt.</p>
+            <h3>Raid Against a World Boss</h3>
+            <p>Coordinated group combat at the endgame — a look at where your ascension ultimately leads.</p>
           </div>
         </article>
       </div>
@@ -584,32 +641,63 @@
 
   <hr class="divider">
 
+  <section id="gallery">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Screenshots</span>
+        <h2>Scenes from Aelion</h2>
+        <p>A few looks at the world you'll be stepping back into.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="https://image.api.playstation.com/vulcan/img/rnd/202010/1520/l7wiAsHNbXX6xKXA1RALwWqx.png" alt="Skyforge screenshot" loading="lazy">
+          <span>01</span>
+        </div>
+        <div class="gallery-item">
+          <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/414530/ss_9ae0c705da744248c0def4684d9e3d7e776ef98b.1920x1080.jpg" alt="Skyforge screenshot" loading="lazy">
+          <span>02</span>
+        </div>
+        <div class="gallery-item">
+          <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/414530/ss_40607fd30d4affffafb6a2f4da7e0f0c53c3350c.1920x1080.jpg" alt="Skyforge screenshot" loading="lazy">
+          <span>03</span>
+        </div>
+        <div class="gallery-item">
+          <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/414530/ss_f34918bba448f866ef542e9a950b7a8e24a8931d.1920x1080.jpg" alt="Skyforge screenshot" loading="lazy">
+          <span>04</span>
+        </div>
+      </div>
+      <p class="gallery-credit">Screenshots from the original Skyforge, sourced from official store pages.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
   <section id="features">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">Warum Revival</span>
-        <h2>Originalgetreu, community-getragen</h2>
+        <span class="eyebrow">Why Revival</span>
+        <h2>Faithful to the Original, Built by the Community</h2>
       </div>
       <div class="feature-grid">
         <div class="feature-card">
           <svg class="feature-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3 L21 8 V16 L12 21 L3 16 V8 Z" stroke="currentColor" stroke-width="1.5"/></svg>
-          <h3>Alle Klassen & Pantheons</h3>
-          <p>Von Paladin bis Kinetiker – die ursprünglichen Klassen und Kampfstile bleiben erhalten.</p>
+          <h3>All Classes & Pantheons</h3>
+          <p>From Paladin to Kinetic — the original classes and playstyles are preserved.</p>
         </div>
         <div class="feature-card">
           <svg class="feature-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2 V22 M4 8 L20 8 M6 15 L18 15" stroke="currentColor" stroke-width="1.5"/></svg>
-          <h3>Originalgetreue Progression</h3>
-          <p>Aufstiegssystem, Invasionen und Distortionen orientieren sich eng am Original.</p>
+          <h3>Faithful Progression</h3>
+          <p>The ascension system, Invasions, and Distortions closely follow the original.</p>
         </div>
         <div class="feature-card">
           <svg class="feature-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg>
-          <h3>Community-getrieben</h3>
-          <p>Roadmap und Prioritäten werden offen mit der Spielerschaft abgestimmt.</p>
+          <h3>Community-Driven</h3>
+          <p>Roadmap and priorities are shaped openly together with the player base.</p>
         </div>
         <div class="feature-card">
           <svg class="feature-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 12 L10 18 L20 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <h3>Aktive Weiterentwicklung</h3>
-          <p>Regelmäßige Patches, Fehlerbehebungen und neue Inhalte nach Entwicklungsstand.</p>
+          <h3>Active Development</h3>
+          <p>Regular patches, bug fixes, and new content as development progresses.</p>
         </div>
       </div>
     </div>
@@ -620,39 +708,39 @@
   <section id="install">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">Erste Schritte</span>
+        <span class="eyebrow">Getting Started</span>
         <h2>Installation</h2>
-        <p>Der Ablauf, sobald der Launcher veröffentlicht ist. Diese Schritte sind ein Platzhalter und werden mit dem finalen Release aktualisiert.</p>
+        <p>The process once the launcher is released. These steps are a placeholder and will be updated for the final release.</p>
       </div>
       <div class="install-wrap">
         <div class="step">
           <div class="step-num">1</div>
-          <div><h3>Skyforge-Client bereitstellen</h3><p>Die Basis-Spieldateien werden benötigt, bevor der Emulator verbunden werden kann.</p></div>
+          <div><h3>Get the Skyforge Client</h3><p>The base game files are required before the emulator can connect.</p></div>
         </div>
         <div class="step">
           <div class="step-num">2</div>
-          <div><h3>Revival-Launcher herunterladen</h3><p>Der Launcher verbindet deinen Client mit den Revival-Servern und hält ihn aktuell.</p></div>
+          <div><h3>Download the Revival Launcher</h3><p>The launcher connects your client to the Revival servers and keeps it up to date.</p></div>
         </div>
         <div class="step">
           <div class="step-num">3</div>
-          <div><h3>Server-Adresse patchen</h3><p>Der Launcher trägt die Server-Adresse automatisch in <code>config.ini</code> ein.</p></div>
+          <div><h3>Patch the Server Address</h3><p>The launcher automatically writes the server address into <code>config.ini</code>.</p></div>
         </div>
         <div class="step">
           <div class="step-num">4</div>
-          <div><h3>Mit deinem Account anmelden</h3><p>Nutze den Account, den du weiter unten registrierst, um dich einzuloggen.</p></div>
+          <div><h3>Log In With Your Account</h3><p>Use the account you create below to log in.</p></div>
         </div>
         <div class="step">
           <div class="step-num">5</div>
-          <div><h3>Aufsteigen</h3><p>Spiel starten und den Weg zur Göttlichkeit auf Aelion fortsetzen.</p></div>
+          <div><h3>Ascend</h3><p>Launch the game and continue your path to godhood on Aelion.</p></div>
         </div>
       </div>
       <div class="download-panel">
         <div>
-          <span class="label">Revival-Launcher</span>
-          <h3>Noch nicht verfügbar</h3>
+          <span class="label">Revival Launcher</span>
+          <h3>Not Available Yet</h3>
         </div>
         <div style="display:flex; align-items:center; gap:14px;">
-          <span class="badge-soon">Bald verfügbar</span>
+          <span class="badge-soon">Coming Soon</span>
           <button class="btn btn-ghost" type="button" disabled>Download</button>
         </div>
       </div>
@@ -664,50 +752,50 @@
   <section id="account">
     <div class="container account-wrap">
       <div class="account-copy">
-        <span class="eyebrow">Werde Teil des Aufstiegs</span>
-        <h2 style="margin:10px 0 16px;">Account erstellen</h2>
-        <p>Erstelle jetzt deinen echten Skyforge-Revival-Account. Dein Login funktioniert bereits – sobald der Server startet, meldest du dich damit direkt im Spiel an.</p>
+        <span class="eyebrow">Join the Ascension</span>
+        <h2 style="margin:10px 0 16px;">Create an Account</h2>
+        <p>Create your real Skyforge Revival account now. Your login already works — once the server launches, you'll sign in with it directly in-game.</p>
         <div class="counter">
           <span class="num" id="counter-num">–</span>
-          <span class="lbl">Unsterbliche<br>bereits registriert</span>
+          <span class="lbl">Immortals<br>already registered</span>
         </div>
       </div>
 
       <form class="register" id="register-form">
         <div class="field">
-          <label for="f-username">Benutzername</label>
-          <input id="f-username" name="username" type="text" maxlength="24" autocomplete="off" placeholder="z. B. Aetherion" required>
-          <span class="field-hint">3–24 Zeichen, wird für deinen Revival-Account reserviert.</span>
+          <label for="f-username">Username</label>
+          <input id="f-username" name="username" type="text" maxlength="24" autocomplete="off" placeholder="e.g. Aetherion" required>
+          <span class="field-hint">3–24 characters, reserved for your Revival account.</span>
         </div>
         <div class="field">
-          <label for="f-email">E-Mail</label>
-          <input id="f-email" name="email" type="email" autocomplete="email" placeholder="du@example.com" required>
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
         </div>
         <div class="field-row">
           <div class="field">
-            <label for="f-password">Passwort</label>
-            <input id="f-password" name="password" type="password" autocomplete="new-password" minlength="6" placeholder="mind. 6 Zeichen" required>
+            <label for="f-password">Password</label>
+            <input id="f-password" name="password" type="password" autocomplete="new-password" minlength="6" placeholder="min. 6 characters" required>
           </div>
           <div class="field">
-            <label for="f-password2">Passwort bestätigen</label>
+            <label for="f-password2">Confirm Password</label>
             <input id="f-password2" name="password2" type="password" autocomplete="new-password" minlength="6" required>
           </div>
         </div>
         <div class="field">
-          <label for="f-class">Bevorzugte Klasse</label>
+          <label for="f-class">Preferred Class</label>
           <select id="f-class" name="class">
             <option value="Paladin">Paladin</option>
-            <option value="Ritter">Ritter</option>
-            <option value="Kinetiker">Kinetiker</option>
+            <option value="Knight">Knight</option>
+            <option value="Kinetic">Kinetic</option>
             <option value="Gunner">Gunner</option>
             <option value="Alchemist">Alchemist</option>
-            <option value="Nekromant">Nekromant</option>
+            <option value="Necromancer">Necromancer</option>
             <option value="Berserker">Berserker</option>
-            <option value="Noch unentschieden">Noch unentschieden</option>
+            <option value="Not sure yet">Not sure yet</option>
           </select>
         </div>
         <div class="form-msg" id="form-msg"></div>
-        <button class="btn btn-primary" type="submit" id="submit-btn" style="justify-content:center;">Registrieren</button>
+        <button class="btn btn-primary" type="submit" id="submit-btn" style="justify-content:center;">Register</button>
       </form>
     </div>
   </section>
@@ -715,10 +803,10 @@
 
 <footer>
   <div class="container">
-    <p class="footer-disclaimer">Skyforge Revival ist ein inoffizielles, nicht-kommerzielles Fan-Projekt und steht in keiner Verbindung zu Allods Team, MY.GAMES oder anderen ursprünglichen Rechteinhabern von Skyforge. Alle Marken- und Spielnamen gehören ihren jeweiligen Eigentümern.</p>
+    <p class="footer-disclaimer">Skyforge Revival is an unofficial, non-commercial fan project and is not affiliated with Allods Team, MY.GAMES, or any other original rights holders of Skyforge. All trademarks and game names belong to their respective owners.</p>
     <div class="footer-inner">
-      <span>© 2026 Skyforge Revival – Community-Projekt</span>
-      <span>Kontakt folgt in Kürze</span>
+      <span>© 2026 Skyforge Revival – Community Project</span>
+      <span>Contact info coming soon</span>
     </div>
   </div>
 </footer>
@@ -810,15 +898,15 @@
 
 <!--
   ============================================================
-  FIREBASE-ANBINDUNG (Account-Registrierung)
+  FIREBASE SETUP (account registration)
   ============================================================
-  1. Firebase-Projekt erstellen: https://console.firebase.google.com
-  2. Authentication -> Sign-in method -> "E-Mail/Passwort" aktivieren
-  3. Firestore Database -> Datenbank erstellen (production mode)
-  4. Projekteinstellungen -> "Meine Apps" -> Web-App hinzufügen -> Config kopieren
-  5. Die firebaseConfig unten mit deinen echten Werten ersetzen
-  6. Firestore-Regeln aus firestore.rules in der Firebase Console eintragen
-     (Firestore Database -> Regeln)
+  1. Create a Firebase project: https://console.firebase.google.com
+  2. Authentication -> Sign-in method -> enable "Email/Password"
+  3. Firestore Database -> create database (production mode)
+  4. Project settings -> "Your apps" -> add a Web app -> copy the config
+  5. Replace the firebaseConfig below with your real values
+  6. Paste the rules from firestore.rules into the Firebase Console
+     (Firestore Database -> Rules)
   ============================================================
 -->
 <script type="module">
@@ -830,7 +918,7 @@
     getFirestore, doc, getDoc, setDoc, collection, onSnapshot, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
-  // TODO: durch deine echte Firebase-Projektkonfiguration ersetzen
+  // TODO: replace with your real Firebase project configuration
   const firebaseConfig = {
     apiKey: "AIzaSyAlSvYnPYFRIU53fK7O1gYuV1D_Gc33h_g",
     authDomain: "skyforge-revival.firebaseapp.com",
@@ -840,7 +928,7 @@
     appId: "1:1068846841821:web:3ed9c9e69620de92da0034"
   };
 
-  const isConfigured = firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('DEIN_') !== 0;
+  const isConfigured = firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('YOUR_') !== 0;
 
   var form = document.getElementById('register-form');
   var msg = document.getElementById('form-msg');
@@ -854,7 +942,7 @@
 
   function resetBtn(){
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Registrieren';
+    submitBtn.textContent = 'Register';
   }
 
   function slugify(name){
@@ -862,7 +950,7 @@
   }
 
   if(!isConfigured){
-    showMsg('Registrierung ist noch nicht eingerichtet (Firebase-Konfiguration fehlt).', 'info');
+    showMsg('Registration isn’t set up yet (Firebase configuration missing).', 'info');
   } else {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -884,31 +972,31 @@
       var klass = form.class.value;
 
       if(username.length < 3){
-        showMsg('Bitte einen Benutzernamen mit mindestens 3 Zeichen wählen.', 'error');
+        showMsg('Please choose a username with at least 3 characters.', 'error');
         return;
       }
       var slug = slugify(username);
       if(!slug){
-        showMsg('Dieser Benutzername enthält keine gültigen Zeichen.', 'error');
+        showMsg('That username doesn’t contain any valid characters.', 'error');
         return;
       }
       if(password.length < 6){
-        showMsg('Das Passwort muss mindestens 6 Zeichen lang sein.', 'error');
+        showMsg('Password must be at least 6 characters long.', 'error');
         return;
       }
       if(password !== password2){
-        showMsg('Die Passwörter stimmen nicht überein.', 'error');
+        showMsg('Passwords don’t match.', 'error');
         return;
       }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Wird geprüft …';
+      submitBtn.textContent = 'Checking …';
 
       var usernameRef = doc(db, 'usernames', slug);
 
       getDoc(usernameRef).then(function(snap){
         if(snap.exists()){
-          showMsg('Dieser Benutzername ist bereits vergeben. Bitte wähle einen anderen.', 'error');
+          showMsg('That username is already taken. Please choose another.', 'error');
           resetBtn();
           return null;
         }
@@ -922,26 +1010,26 @@
               });
             })
             .then(function(){
-              showMsg('Account erstellt! Du kannst dich damit anmelden, sobald der Server startet.', 'success');
+              showMsg('Account created! You can log in with it once the server launches.', 'success');
               form.reset();
               resetBtn();
             })
             .catch(function(){
-              // Name wurde in der Zwischenzeit vergeben -> Account wieder entfernen
-              showMsg('Dieser Benutzername wurde gerade eben vergeben. Bitte wähle einen anderen.', 'error');
+              // Username was claimed by someone else in the meantime -> roll back the account
+              showMsg('That username was just taken. Please choose another.', 'error');
               return deleteUser(cred.user).catch(function(){}).then(resetBtn);
             });
         });
       }).catch(function(err){
         var code = err && err.code;
         if(code === 'auth/email-already-in-use'){
-          showMsg('Für diese E-Mail existiert bereits ein Account.', 'error');
+          showMsg('An account with this email already exists.', 'error');
         } else if(code === 'auth/invalid-email'){
-          showMsg('Bitte eine gültige E-Mail-Adresse angeben.', 'error');
+          showMsg('Please enter a valid email address.', 'error');
         } else if(code === 'auth/weak-password'){
-          showMsg('Das Passwort ist zu schwach (mind. 6 Zeichen).', 'error');
+          showMsg('Password is too weak (min. 6 characters).', 'error');
         } else {
-          showMsg('Registrierung aktuell nicht möglich. Bitte später erneut versuchen.', 'error');
+          showMsg('Registration isn’t possible right now. Please try again later.', 'error');
         }
         resetBtn();
       });
