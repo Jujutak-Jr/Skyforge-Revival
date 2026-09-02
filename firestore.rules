@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Benutzername-Reservierung: Dokument-ID = Benutzername (slug).
+    // "create" gilt in Firestore-Regeln nur, wenn das Dokument noch NICHT existiert,
+    // dadurch ist ein Benutzername automatisch nur einmal vergebbar.
+    match /usernames/{username} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.uid;
+      allow update, delete: if false;
+    }
+
+    // Öffentliches Profil pro Account (uid = Firebase-Auth-User-ID)
+    match /accounts/{uid} {
+      allow read: if true;
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow update: if request.auth != null && request.auth.uid == uid;
+      allow delete: if false;
+    }
+  }
+}

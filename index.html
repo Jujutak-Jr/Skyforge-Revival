@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skyforge Revival</title>
+<meta name="description" content="Skyforge Revival – Fan-betriebener Server-Emulator für das MMORPG Skyforge. Videos, Infos, Installation und Account-Erstellung.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%92%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0b12;
+    --bg-2:#0e0f19;
+    --surface:#151726;
+    --surface-2:#1c1f33;
+    --border:#2a2c45;
+    --gold:#c99a52;
+    --gold-bright:#e6c17e;
+    --ember:#d1704a;
+    --celestial:#8b7ad1;
+    --celestial-dim:#4c4373;
+    --text:#ece8dc;
+    --text-dim:#a9a4bd;
+    --text-faint:#6e6a86;
+    --font-display:'Cinzel','Iowan Old Style',Georgia,serif;
+    --font-body:'Manrope',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;} }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  img{max-width:100%;}
+  a{color:inherit;}
+
+  h1,h2,h3{
+    font-family:var(--font-display);
+    font-weight:600;
+    text-wrap:balance;
+    margin:0;
+    color:var(--gold-bright);
+    letter-spacing:.01em;
+  }
+
+  p{margin:0;}
+
+  .container{
+    max-width:1120px;
+    margin:0 auto;
+    padding:0 clamp(20px,4vw,40px);
+  }
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:.72rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--celestial);
+  }
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(10,11,18,.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    padding:16px clamp(20px,4vw,40px);
+    max-width:1120px;
+    margin:0 auto;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:var(--font-display);
+    font-size:1.05rem;
+    letter-spacing:.04em;
+    color:var(--gold-bright);
+    text-decoration:none;
+  }
+  .brand svg{flex-shrink:0;}
+  .nav-links{
+    display:flex;
+    gap:clamp(14px,2.4vw,28px);
+    list-style:none;
+    margin:0;
+    padding:0;
+    font-size:.88rem;
+  }
+  .nav-links a{
+    text-decoration:none;
+    color:var(--text-dim);
+    transition:color .15s ease;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible{color:var(--gold-bright);}
+  .nav-cta{
+    display:inline-flex;
+    align-items:center;
+    padding:8px 16px;
+    border-radius:2px;
+    background:var(--gold);
+    color:#161116;
+    font-weight:700;
+    font-size:.85rem;
+    text-decoration:none;
+    border:1px solid var(--gold);
+    transition:filter .15s ease;
+  }
+  .nav-cta:hover, .nav-cta:focus-visible{filter:brightness(1.12);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    border-bottom:1px solid var(--border);
+    background:
+      radial-gradient(ellipse 70% 60% at 50% -10%, rgba(139,122,209,.22), transparent 60%),
+      linear-gradient(180deg, var(--bg-2), var(--bg));
+  }
+  #hero-canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:.8;
+  }
+  .hero-content{
+    position:relative;
+    z-index:2;
+    padding:clamp(72px,12vw,132px) 0 clamp(56px,8vw,96px);
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:22px;
+  }
+  .hero h1{
+    font-size:clamp(2.5rem,5.4vw,4.4rem);
+    line-height:1.08;
+    max-width:14ch;
+  }
+  .hero h1 .accent{color:var(--ember);}
+  .hero-sub{
+    max-width:56ch;
+    color:var(--text-dim);
+    font-size:clamp(1rem,1.6vw,1.15rem);
+  }
+  .hero-actions{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:6px;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:13px 26px;
+    border-radius:2px;
+    font-weight:700;
+    font-size:.92rem;
+    text-decoration:none;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:filter .15s ease, transform .15s ease, background .15s ease;
+    font-family:var(--font-body);
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--gold); color:#161116; border-color:var(--gold);}
+  .btn-primary:hover, .btn-primary:focus-visible{filter:brightness(1.12);}
+  .btn-ghost{background:transparent; color:var(--text); border-color:var(--border);}
+  .btn-ghost:hover, .btn-ghost:focus-visible{border-color:var(--celestial); color:var(--gold-bright);}
+  .btn:disabled{opacity:.5; cursor:not-allowed; filter:none;}
+
+  .hero-tags{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    font-family:var(--font-mono);
+    font-size:.74rem;
+    color:var(--text-faint);
+    letter-spacing:.03em;
+  }
+  .hero-tags span{
+    border:1px solid var(--border);
+    padding:4px 10px;
+    border-radius:100px;
+  }
+
+  /* ---------- SECTION GENERIC ---------- */
+  section{padding:clamp(56px,9vw,96px) 0;}
+  .section-head{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:clamp(32px,5vw,52px);
+    max-width:64ch;
+  }
+  .section-head h2{font-size:clamp(1.7rem,3.2vw,2.4rem);}
+  .section-head p{color:var(--text-dim);}
+
+  .divider{
+    border:none;
+    height:1px;
+    background:var(--border);
+    margin:0;
+  }
+
+  /* ---------- ABOUT / STATUS ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:clamp(28px,5vw,56px);
+    align-items:start;
+  }
+  .about-copy p{color:var(--text-dim); margin-bottom:14px;}
+  .about-copy p:last-child{margin-bottom:0;}
+  .about-copy strong{color:var(--text);}
+
+  .status-panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .status-panel-head{
+    padding:12px 18px;
+    border-bottom:1px solid var(--border);
+    font-family:var(--font-mono);
+    font-size:.72rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--celestial);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .status-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--ember);
+    box-shadow:0 0 8px var(--ember);
+  }
+  .status-rows{padding:6px 0;}
+  .status-row{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    padding:11px 18px;
+    font-size:.88rem;
+    border-bottom:1px solid rgba(255,255,255,.04);
+  }
+  .status-row:last-child{border-bottom:none;}
+  .status-row dt{color:var(--text-faint);}
+  .status-row dd{margin:0; font-family:var(--font-mono); color:var(--text); text-align:right;}
+
+  /* ---------- VIDEOS ---------- */
+  .video-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+    gap:26px;
+  }
+  .video-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:4px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .video-frame{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    background:#000;
+  }
+  .video-frame iframe{
+    position:absolute; inset:0; width:100%; height:100%; border:0;
+  }
+  .video-meta{padding:16px 18px 20px;}
+  .video-meta .eyebrow{margin-bottom:6px; display:block;}
+  .video-meta h3{font-size:1.05rem; color:var(--text); margin-bottom:6px;}
+  .video-meta p{color:var(--text-dim); font-size:.9rem;}
+
+  /* ---------- FEATURES ---------- */
+  .feature-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(230px,1fr));
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .feature-card{
+    background:var(--surface);
+    padding:26px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .feature-icon{color:var(--gold);}
+  .feature-card h3{font-size:1.02rem; color:var(--text); font-family:var(--font-body); font-weight:700;}
+  .feature-card p{color:var(--text-dim); font-size:.89rem;}
+
+  /* ---------- INSTALLATION ---------- */
+  .install-wrap{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  .step{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:18px;
+    padding:20px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:4px;
+  }
+  .step-num{
+    font-family:var(--font-mono);
+    font-size:.95rem;
+    color:var(--bg);
+    background:var(--gold);
+    width:32px; height:32px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:2px;
+    font-weight:600;
+  }
+  .step h3{font-size:1rem; color:var(--text); font-family:var(--font-body); font-weight:700; margin-bottom:4px;}
+  .step p{color:var(--text-dim); font-size:.9rem;}
+  .step code{
+    font-family:var(--font-mono);
+    background:var(--surface-2);
+    padding:2px 6px;
+    border-radius:3px;
+    font-size:.82rem;
+    color:var(--gold-bright);
+  }
+
+  .download-panel{
+    margin-top:28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    flex-wrap:wrap;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:22px 26px;
+  }
+  .download-panel .label{font-family:var(--font-mono); font-size:.78rem; color:var(--text-faint); letter-spacing:.06em; text-transform:uppercase; margin-bottom:4px; display:block;}
+  .download-panel h3{color:var(--text); font-family:var(--font-body); font-size:1.05rem;}
+  .badge-soon{
+    font-family:var(--font-mono);
+    font-size:.72rem;
+    color:var(--ember);
+    border:1px solid var(--ember);
+    padding:3px 9px;
+    border-radius:100px;
+    letter-spacing:.05em;
+  }
+
+  /* ---------- ACCOUNT ---------- */
+  .account-wrap{
+    display:grid;
+    grid-template-columns:1fr 1.1fr;
+    gap:clamp(28px,5vw,56px);
+    align-items:start;
+  }
+  .account-copy p{color:var(--text-dim); margin-bottom:16px;}
+  .counter{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-top:22px;
+    font-family:var(--font-mono);
+  }
+  .counter .num{font-size:2.1rem; color:var(--gold-bright); font-weight:600;}
+  .counter .lbl{color:var(--text-faint); font-size:.82rem;}
+
+  form.register{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:clamp(22px,4vw,32px);
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .field{display:flex; flex-direction:column; gap:6px;}
+  .field label{font-size:.8rem; color:var(--text-dim); font-weight:600;}
+  .field input, .field select{
+    background:var(--bg-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:11px 13px;
+    border-radius:3px;
+    font-family:var(--font-body);
+    font-size:.95rem;
+    width:100%;
+  }
+  .field input:focus-visible, .field select:focus-visible{
+    outline:2px solid var(--celestial);
+    outline-offset:1px;
+    border-color:var(--celestial);
+  }
+  .field-hint{font-size:.76rem; color:var(--text-faint);}
+  .form-msg{
+    font-size:.86rem;
+    padding:10px 12px;
+    border-radius:3px;
+    display:none;
+  }
+  .form-msg.show{display:block;}
+  .form-msg.error{background:rgba(209,112,74,.12); color:var(--ember); border:1px solid rgba(209,112,74,.35);}
+  .form-msg.success{background:rgba(139,122,209,.14); color:var(--celestial); border:1px solid rgba(139,122,209,.4);}
+  .form-msg.info{background:rgba(255,255,255,.05); color:var(--text-dim); border:1px solid var(--border);}
+
+  @media (max-width: 560px){
+    .field-row{grid-template-columns:1fr;}
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    border-top:1px solid var(--border);
+    padding:36px 0;
+    background:var(--bg-2);
+  }
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+    font-size:.82rem;
+    color:var(--text-faint);
+  }
+  .footer-disclaimer{
+    max-width:70ch;
+    margin:0 auto 20px;
+    text-align:center;
+    font-size:.78rem;
+    color:var(--text-faint);
+    line-height:1.6;
+  }
+
+  @media (max-width: 820px){
+    .about-grid, .account-wrap{grid-template-columns:1fr;}
+    .nav-links{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2 L20 7 V17 L12 22 L4 17 V7 Z" stroke="#c99a52" stroke-width="1.4"/>
+        <path d="M12 2 V22 M4 7 L20 17 M20 7 L4 17" stroke="#8b7ad1" stroke-width=".6" opacity=".6"/>
+      </svg>
+      SKYFORGE REVIVAL
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">Über das Projekt</a></li>
+      <li><a href="#videos">Videos</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#install">Installation</a></li>
+    </ul>
+    <a class="nav-cta" href="#account">Account erstellen</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <canvas id="hero-canvas" aria-hidden="true"></canvas>
+    <div class="container hero-content">
+      <span class="eyebrow">Fan-betriebener Server-Emulator</span>
+      <h1>Steig auf. Werde ein Gott. <span class="accent">Erneut.</span></h1>
+      <p class="hero-sub">Skyforge Revival bringt das gefallene Science-Fantasy-MMO zurück auf den Planeten Aelion. Ein Community-Projekt, das den originalen Aufstieg zur Göttlichkeit als privaten Server-Emulator neu aufbaut.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#account">Account erstellen</a>
+        <a class="btn btn-ghost" href="#videos">Videos ansehen</a>
+      </div>
+      <div class="hero-tags">
+        <span>Inoffizielles Fan-Projekt</span>
+        <span>PC · Windows</span>
+        <span>In Entwicklung</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="container about-grid">
+      <div class="about-copy">
+        <span class="eyebrow">Über Skyforge Revival</span>
+        <h2 style="margin:10px 0 18px;">Ein totes MMO, von der Community wiederbelebt</h2>
+        <p><strong>Skyforge</strong> war ein Science-Fantasy-MMORPG, in dem Spieler als Unsterbliche auf dem Planeten <strong>Aelion</strong> gegen Invasoren kämpfen und sich über das Aufstiegssystem zur Göttlichkeit hocharbeiten. Nach der Einstellung der offiziellen Server ist das Spiel für Neu- und Bestandsspieler nicht mehr erreichbar.</p>
+        <p><strong>Skyforge Revival</strong> ist ein von Fans entwickelter Server-Emulator, der die Spielwelt, Klassen und Progression des Originals nachbildet, damit die Community weiterspielen kann. Das Projekt wird unabhängig und nicht-kommerziell betrieben.</p>
+        <p>Alle Inhalte, Fortschritte und Zeitpläne befinden sich aktuell in aktiver Entwicklung – Details dazu findest du im Status-Panel und im Installationsbereich weiter unten.</p>
+      </div>
+      <div class="status-panel">
+        <div class="status-panel-head"><span class="status-dot"></span> Projektstatus</div>
+        <dl class="status-rows">
+          <div class="status-row"><dt>Phase</dt><dd>In Entwicklung</dd></div>
+          <div class="status-row"><dt>Plattform</dt><dd>PC (Windows)</dd></div>
+          <div class="status-row"><dt>Basis</dt><dd>Skyforge Client</dd></div>
+          <div class="status-row"><dt>Kosten</dt><dd>Kostenlos</dd></div>
+          <div class="status-row"><dt>Träger</dt><dd>Community</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="videos">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Bewegtbild</span>
+        <h2>Skyforge in Aktion</h2>
+        <p>Drei Einblicke aus der Originalversion des Spiels – vom ersten Login bis zum Raid gegen einen Weltenfeind.</p>
+      </div>
+      <div class="video-grid">
+        <article class="video-card">
+          <div class="video-frame">
+            <iframe src="https://www.youtube.com/embed/PH3UsFNyPRo" title="Skyforge Einsteiger-Guide" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-meta">
+            <span class="eyebrow">Einsteiger-Guide</span>
+            <h3>Der erste Aufstieg</h3>
+            <p>Klassen, Grundlagen und die ersten Schritte auf Aelion – ideal, wenn du neu einsteigst.</p>
+          </div>
+        </article>
+        <article class="video-card">
+          <div class="video-frame">
+            <iframe src="https://www.youtube.com/embed/HxWVYdnBZvw" title="Skyforge Gameplay Überblick" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-meta">
+            <span class="eyebrow">Gameplay</span>
+            <h3>Überblick vom Start weg</h3>
+            <p>Kampfsystem, Erkundung und Weltgeschehen im Zusammenspiel – ein kompletter Rundgang.</p>
+          </div>
+        </article>
+        <article class="video-card">
+          <div class="video-frame">
+            <iframe src="https://www.youtube.com/embed/nU0cBI50nNM" title="Skyforge Raid Gameplay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-meta">
+            <span class="eyebrow">Endgame</span>
+            <h3>Raid gegen einen Weltenfeind</h3>
+            <p>Koordinierter Gruppenkampf im Endgame – zeigt, wohin dein Aufstieg letztlich führt.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="features">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Warum Revival</span>
+        <h2>Originalgetreu, community-getragen</h2>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <svg class="feature-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3 L21 8 V16 L12 21 L3 16 V8 Z" stroke="currentColor" stroke-width="1.5"/></svg>
+          <h3>Alle Klassen & Pantheons</h3>
+          <p>Von Paladin bis Kinetiker – die ursprünglichen Klassen und Kampfstile bleiben erhalten.</p>
+        </div>
+        <div class="feature-card">
+          <svg class="feature-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2 V22 M4 8 L20 8 M6 15 L18 15" stroke="currentColor" stroke-width="1.5"/></svg>
+          <h3>Originalgetreue Progression</h3>
+          <p>Aufstiegssystem, Invasionen und Distortionen orientieren sich eng am Original.</p>
+        </div>
+        <div class="feature-card">
+          <svg class="feature-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg>
+          <h3>Community-getrieben</h3>
+          <p>Roadmap und Prioritäten werden offen mit der Spielerschaft abgestimmt.</p>
+        </div>
+        <div class="feature-card">
+          <svg class="feature-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 12 L10 18 L20 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Aktive Weiterentwicklung</h3>
+          <p>Regelmäßige Patches, Fehlerbehebungen und neue Inhalte nach Entwicklungsstand.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="install">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Erste Schritte</span>
+        <h2>Installation</h2>
+        <p>Der Ablauf, sobald der Launcher veröffentlicht ist. Diese Schritte sind ein Platzhalter und werden mit dem finalen Release aktualisiert.</p>
+      </div>
+      <div class="install-wrap">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div><h3>Skyforge-Client bereitstellen</h3><p>Die Basis-Spieldateien werden benötigt, bevor der Emulator verbunden werden kann.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div><h3>Revival-Launcher herunterladen</h3><p>Der Launcher verbindet deinen Client mit den Revival-Servern und hält ihn aktuell.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div><h3>Server-Adresse patchen</h3><p>Der Launcher trägt die Server-Adresse automatisch in <code>config.ini</code> ein.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div><h3>Mit deinem Account anmelden</h3><p>Nutze den Account, den du weiter unten registrierst, um dich einzuloggen.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div><h3>Aufsteigen</h3><p>Spiel starten und den Weg zur Göttlichkeit auf Aelion fortsetzen.</p></div>
+        </div>
+      </div>
+      <div class="download-panel">
+        <div>
+          <span class="label">Revival-Launcher</span>
+          <h3>Noch nicht verfügbar</h3>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span class="badge-soon">Bald verfügbar</span>
+          <button class="btn btn-ghost" type="button" disabled>Download</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="account">
+    <div class="container account-wrap">
+      <div class="account-copy">
+        <span class="eyebrow">Werde Teil des Aufstiegs</span>
+        <h2 style="margin:10px 0 16px;">Account erstellen</h2>
+        <p>Erstelle jetzt deinen echten Skyforge-Revival-Account. Dein Login funktioniert bereits – sobald der Server startet, meldest du dich damit direkt im Spiel an.</p>
+        <div class="counter">
+          <span class="num" id="counter-num">–</span>
+          <span class="lbl">Unsterbliche<br>bereits registriert</span>
+        </div>
+      </div>
+
+      <form class="register" id="register-form">
+        <div class="field">
+          <label for="f-username">Benutzername</label>
+          <input id="f-username" name="username" type="text" maxlength="24" autocomplete="off" placeholder="z. B. Aetherion" required>
+          <span class="field-hint">3–24 Zeichen, wird für deinen Revival-Account reserviert.</span>
+        </div>
+        <div class="field">
+          <label for="f-email">E-Mail</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" placeholder="du@example.com" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-password">Passwort</label>
+            <input id="f-password" name="password" type="password" autocomplete="new-password" minlength="6" placeholder="mind. 6 Zeichen" required>
+          </div>
+          <div class="field">
+            <label for="f-password2">Passwort bestätigen</label>
+            <input id="f-password2" name="password2" type="password" autocomplete="new-password" minlength="6" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-class">Bevorzugte Klasse</label>
+          <select id="f-class" name="class">
+            <option value="Paladin">Paladin</option>
+            <option value="Ritter">Ritter</option>
+            <option value="Kinetiker">Kinetiker</option>
+            <option value="Gunner">Gunner</option>
+            <option value="Alchemist">Alchemist</option>
+            <option value="Nekromant">Nekromant</option>
+            <option value="Berserker">Berserker</option>
+            <option value="Noch unentschieden">Noch unentschieden</option>
+          </select>
+        </div>
+        <div class="form-msg" id="form-msg"></div>
+        <button class="btn btn-primary" type="submit" id="submit-btn" style="justify-content:center;">Registrieren</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p class="footer-disclaimer">Skyforge Revival ist ein inoffizielles, nicht-kommerzielles Fan-Projekt und steht in keiner Verbindung zu Allods Team, MY.GAMES oder anderen ursprünglichen Rechteinhabern von Skyforge. Alle Marken- und Spielnamen gehören ihren jeweiligen Eigentümern.</p>
+    <div class="footer-inner">
+      <span>© 2026 Skyforge Revival – Community-Projekt</span>
+      <span>Kontakt folgt in Kürze</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ---------- hero canvas: rising embers + stars, static if reduced motion ----------
+  var canvas = document.getElementById('hero-canvas');
+  var ctx = canvas.getContext('2d');
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var particles = [];
+  var stars = [];
+  var w, h, dpr;
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = canvas.parentElement.clientWidth;
+    h = canvas.parentElement.clientHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function initField(){
+    stars = [];
+    for(var i=0;i<70;i++){
+      stars.push({x:Math.random()*w, y:Math.random()*h*0.7, r:Math.random()*1.2+0.2, a:Math.random()*0.6+0.2});
+    }
+    particles = [];
+    var count = reduceMotion ? 0 : 34;
+    for(var j=0;j<count;j++){
+      particles.push(spawnEmber());
+    }
+  }
+
+  function spawnEmber(){
+    return {
+      x: Math.random()*w,
+      y: h + Math.random()*40,
+      r: Math.random()*1.8+0.6,
+      vy: Math.random()*0.35+0.15,
+      vx: (Math.random()-0.5)*0.25,
+      life: Math.random()*1,
+      color: Math.random() > 0.5 ? '201,154,82' : '209,112,74'
+    };
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(var s=0; s<stars.length; s++){
+      var st = stars[s];
+      ctx.fillStyle = 'rgba(236,232,220,'+st.a+')';
+      ctx.beginPath();
+      ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+    for(var i=0;i<particles.length;i++){
+      var p = particles[i];
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba('+p.color+','+(0.7*(1-p.life*0.4))+')';
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
+      if(!reduceMotion){
+        p.y -= p.vy;
+        p.x += p.vx;
+        p.life += 0.002;
+        if(p.y < -10 || p.life > 1){
+          particles[i] = spawnEmber();
+        }
+      }
+    }
+    if(!reduceMotion){
+      requestAnimationFrame(draw);
+    }
+  }
+
+  resize();
+  initField();
+  draw();
+  window.addEventListener('resize', function(){
+    resize();
+    initField();
+    if(reduceMotion) draw();
+  });
+})();
+</script>
+
+<!--
+  ============================================================
+  FIREBASE-ANBINDUNG (Account-Registrierung)
+  ============================================================
+  1. Firebase-Projekt erstellen: https://console.firebase.google.com
+  2. Authentication -> Sign-in method -> "E-Mail/Passwort" aktivieren
+  3. Firestore Database -> Datenbank erstellen (production mode)
+  4. Projekteinstellungen -> "Meine Apps" -> Web-App hinzufügen -> Config kopieren
+  5. Die firebaseConfig unten mit deinen echten Werten ersetzen
+  6. Firestore-Regeln aus firestore.rules in der Firebase Console eintragen
+     (Firestore Database -> Regeln)
+  ============================================================
+-->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+  import {
+    getAuth, createUserWithEmailAndPassword, deleteUser
+  } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, collection, onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+  // TODO: durch deine echte Firebase-Projektkonfiguration ersetzen
+  const firebaseConfig = {
+    apiKey: "AIzaSyAlSvYnPYFRIU53fK7O1gYuV1D_Gc33h_g",
+    authDomain: "skyforge-revival.firebaseapp.com",
+    projectId: "skyforge-revival",
+    storageBucket: "skyforge-revival.firebasestorage.app",
+    messagingSenderId: "1068846841821",
+    appId: "1:1068846841821:web:3ed9c9e69620de92da0034"
+  };
+
+  const isConfigured = firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('DEIN_') !== 0;
+
+  var form = document.getElementById('register-form');
+  var msg = document.getElementById('form-msg');
+  var submitBtn = document.getElementById('submit-btn');
+  var counterEl = document.getElementById('counter-num');
+
+  function showMsg(text, type){
+    msg.textContent = text;
+    msg.className = 'form-msg show ' + type;
+  }
+
+  function resetBtn(){
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Registrieren';
+  }
+
+  function slugify(name){
+    return name.trim().toLowerCase().replace(/[^a-z0-9_\-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,32);
+  }
+
+  if(!isConfigured){
+    showMsg('Registrierung ist noch nicht eingerichtet (Firebase-Konfiguration fehlt).', 'info');
+  } else {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    try{
+      onSnapshot(collection(db, 'accounts'), function(snap){
+        counterEl.textContent = snap.size;
+      }, function(){ counterEl.textContent = '–'; });
+    }catch(e){}
+
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+
+      var username = form.username.value.trim();
+      var email = form.email.value.trim();
+      var password = form.password.value;
+      var password2 = form.password2.value;
+      var klass = form.class.value;
+
+      if(username.length < 3){
+        showMsg('Bitte einen Benutzernamen mit mindestens 3 Zeichen wählen.', 'error');
+        return;
+      }
+      var slug = slugify(username);
+      if(!slug){
+        showMsg('Dieser Benutzername enthält keine gültigen Zeichen.', 'error');
+        return;
+      }
+      if(password.length < 6){
+        showMsg('Das Passwort muss mindestens 6 Zeichen lang sein.', 'error');
+        return;
+      }
+      if(password !== password2){
+        showMsg('Die Passwörter stimmen nicht überein.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Wird geprüft …';
+
+      var usernameRef = doc(db, 'usernames', slug);
+
+      getDoc(usernameRef).then(function(snap){
+        if(snap.exists()){
+          showMsg('Dieser Benutzername ist bereits vergeben. Bitte wähle einen anderen.', 'error');
+          resetBtn();
+          return null;
+        }
+        return createUserWithEmailAndPassword(auth, email, password).then(function(cred){
+          return setDoc(usernameRef, { uid: cred.user.uid, createdAt: serverTimestamp() })
+            .then(function(){
+              return setDoc(doc(db, 'accounts', cred.user.uid), {
+                username: username,
+                class: klass,
+                createdAt: serverTimestamp()
+              });
+            })
+            .then(function(){
+              showMsg('Account erstellt! Du kannst dich damit anmelden, sobald der Server startet.', 'success');
+              form.reset();
+              resetBtn();
+            })
+            .catch(function(){
+              // Name wurde in der Zwischenzeit vergeben -> Account wieder entfernen
+              showMsg('Dieser Benutzername wurde gerade eben vergeben. Bitte wähle einen anderen.', 'error');
+              return deleteUser(cred.user).catch(function(){}).then(resetBtn);
+            });
+        });
+      }).catch(function(err){
+        var code = err && err.code;
+        if(code === 'auth/email-already-in-use'){
+          showMsg('Für diese E-Mail existiert bereits ein Account.', 'error');
+        } else if(code === 'auth/invalid-email'){
+          showMsg('Bitte eine gültige E-Mail-Adresse angeben.', 'error');
+        } else if(code === 'auth/weak-password'){
+          showMsg('Das Passwort ist zu schwach (mind. 6 Zeichen).', 'error');
+        } else {
+          showMsg('Registrierung aktuell nicht möglich. Bitte später erneut versuchen.', 'error');
+        }
+        resetBtn();
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
