@@ -1,24 +1,3 @@
-# Skyforge Revival – Setup
-
-Diese Dateien sind fertig für GitHub Pages. Zwei Dinge musst du selbst erledigen, weil sie deinen eigenen Account brauchen: **Firebase einrichten** und **auf GitHub hochladen**.
-
-## 1. Firebase einrichten (für die Account-Registrierung)
-
-1. Gehe zu https://console.firebase.google.com und erstelle ein neues, kostenloses Projekt.
-2. Links im Menü: **Authentication** → Tab "Sign-in method" → **E-Mail/Passwort** aktivieren.
-3. Links im Menü: **Firestore Database** → "Datenbank erstellen" → Production mode.
-4. Zahnrad oben links → **Projekteinstellungen** → runterscrollen zu "Meine Apps" → Web-App hinzufügen (`</>`-Icon) → einen Namen vergeben → Firebase zeigt dir ein `firebaseConfig`-Objekt mit 6 Werten (apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId).
-5. Öffne `index.html`, suche `firebaseConfig` (ganz unten) und trage dort deine 6 Werte ein.
-6. In der Firebase Console: **Firestore Database → Regeln** → den kompletten Inhalt von `firestore.rules` (liegt in diesem Ordner) einfügen und veröffentlichen.
-
-Diese Werte sind **keine Geheimnisse** – sie dürfen im Frontend-Code stehen, die eigentliche Absicherung passiert über die Firestore-Regeln aus Schritt 6.
-
-## 2. Auf GitHub Pages veröffentlichen
-
-1. Auf github.com ein neues, öffentliches Repository erstellen, z. B. `skyforge-revival`.
-2. Alle Dateien aus diesem Ordner hochladen (`index.html`, `firestore.rules`, `README.md`, `CNAME` – am einfachsten per Drag & Drop im Browser über "Add file → Upload files", oder per `git push`).
-3. Im Repo: **Settings → Pages** → unter "Build and deployment" → Source: "Deploy from a branch" → Branch: `main`, Ordner `/root` → Speichern.
-4. Nach 1–2 Minuten ist die Seite live unter `https://DEIN-GITHUB-NAME.github.io/skyforge-revival/`.
 
 ## 3. Optional: eigene Domain skyforge-revival.com
 
