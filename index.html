@@ -529,6 +529,7 @@
     border-radius:4px;
     overflow:hidden;
   }
+  .forum-thread.pinned{border-color:var(--gold);}
   .forum-thread summary{
     padding:16px 20px;
     cursor:pointer;
@@ -539,6 +540,7 @@
   }
   .forum-thread summary::-webkit-details-marker{display:none;}
   .ft-title{color:var(--text); font-weight:700; font-size:.98rem;}
+  .ft-pin{color:var(--gold-bright); font-size:.78rem; font-weight:700; margin-right:2px;}
   .ft-meta{font-family:var(--font-mono); font-size:.72rem; color:var(--text-faint);}
   .forum-thread-body{padding:16px 20px 20px; border-top:1px solid var(--border);}
   .ft-post{color:var(--text-dim); font-size:.92rem; white-space:pre-wrap; margin-bottom:16px;}
@@ -1675,13 +1677,20 @@
         forumList.appendChild(forumEmpty);
         return;
       }
-      snap.forEach(function(d){
+      var docs = [];
+      snap.forEach(function(d){ docs.push(d); });
+      docs.sort(function(a, b){
+        var pa = a.data().pinned ? 1 : 0;
+        var pb = b.data().pinned ? 1 : 0;
+        return pb - pa; // pinned threads first, otherwise keep createdAt-desc order from the query
+      });
+      docs.forEach(function(d){
         var t = d.data();
         var id = d.id;
         var details = document.createElement('details');
-        details.className = 'forum-thread';
+        details.className = 'forum-thread' + (t.pinned ? ' pinned' : '');
         details.innerHTML =
-          '<summary><span class="ft-title">' + escapeHtml(t.title) + '</span>' +
+          '<summary><span class="ft-title">' + (t.pinned ? '<span class="ft-pin">📌 Pinned</span> ' : '') + escapeHtml(t.title) + '</span>' +
           '<span class="ft-meta">by ' + escapeHtml(t.authorName || 'Immortal') + ' · ' + formatDate(t.createdAt) + '</span></summary>' +
           '<div class="forum-thread-body">' +
             '<p class="ft-post">' + escapeHtml(t.body) + '</p>' +
