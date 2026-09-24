@@ -19,5 +19,32 @@ service cloud.firestore {
       allow update: if request.auth != null && request.auth.uid == uid;
       allow delete: if false;
     }
+
+    // Forum: Threads sind für alle lesbar, nur eingeloggte Nutzer dürfen
+    // welche erstellen (und nur unter ihrer eigenen uid). Kein Bearbeiten/
+    // Löschen über die App - Moderation läuft manuell über die Firebase Console.
+    match /forumThreads/{threadId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.authorUid == request.auth.uid
+                    && request.resource.data.title is string
+                    && request.resource.data.title.size() > 0
+                    && request.resource.data.title.size() <= 120
+                    && request.resource.data.body is string
+                    && request.resource.data.body.size() > 0
+                    && request.resource.data.body.size() <= 4000;
+      allow update, delete: if false;
+
+      // Antworten auf einen Thread, gleiches Prinzip.
+      match /replies/{replyId} {
+        allow read: if true;
+        allow create: if request.auth != null
+                      && request.resource.data.authorUid == request.auth.uid
+                      && request.resource.data.body is string
+                      && request.resource.data.body.size() > 0
+                      && request.resource.data.body.size() <= 2000;
+        allow update, delete: if false;
+      }
+    }
   }
 }

@@ -146,6 +146,30 @@
   }
   .discord-link svg{width:20px; height:20px; display:block;}
   .discord-link:hover, .discord-link:focus-visible{filter:brightness(1.15); transform:translateY(-1px);}
+  .nav-auth{
+    font-family:var(--font-mono);
+    font-size:.78rem;
+    color:var(--text-dim);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    white-space:nowrap;
+  }
+  .nav-auth a{text-decoration:none; color:var(--text-dim); transition:color .15s ease;}
+  .nav-auth a:hover{color:var(--gold-bright);}
+  .nav-auth strong{color:var(--gold-bright); font-family:var(--font-body);}
+  .nav-auth button{
+    background:none;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-family:var(--font-mono);
+    font-size:.72rem;
+    padding:4px 9px;
+    border-radius:100px;
+    cursor:pointer;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .nav-auth button:hover{border-color:var(--gold); color:var(--gold-bright);}
 
   /* ---------- HERO ---------- */
   .hero{
@@ -488,6 +512,49 @@
   .faq-item[open] summary::after{content:"–";}
   .faq-item p{padding:0 20px 18px; color:var(--text-dim); font-size:.9rem;}
 
+  /* ---------- FORUM ---------- */
+  .forum-new{margin-bottom:18px;}
+  .forum-login-hint{color:var(--text-faint); font-size:.85rem; font-family:var(--font-mono); margin-bottom:18px;}
+  .forum-list{display:flex; flex-direction:column; gap:14px;}
+  .forum-empty{color:var(--text-faint); font-size:.9rem;}
+  .forum-thread{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .forum-thread summary{
+    padding:16px 20px;
+    cursor:pointer;
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .forum-thread summary::-webkit-details-marker{display:none;}
+  .ft-title{color:var(--text); font-weight:700; font-size:.98rem;}
+  .ft-meta{font-family:var(--font-mono); font-size:.72rem; color:var(--text-faint);}
+  .forum-thread-body{padding:16px 20px 20px; border-top:1px solid var(--border);}
+  .ft-post{color:var(--text-dim); font-size:.92rem; white-space:pre-wrap; margin-bottom:16px;}
+  .forum-replies{display:flex; flex-direction:column; gap:10px; margin-bottom:16px;}
+  .forum-loading{color:var(--text-faint); font-size:.84rem;}
+  .forum-reply{background:var(--surface-2); border-radius:3px; padding:10px 14px;}
+  .forum-reply .fr-meta{font-family:var(--font-mono); font-size:.68rem; color:var(--text-faint); margin-bottom:4px;}
+  .forum-reply .fr-body{color:var(--text-dim); font-size:.86rem; white-space:pre-wrap;}
+  .forum-reply-form{display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap;}
+  .forum-reply-form textarea{
+    flex:1; min-width:200px;
+    background:var(--bg-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 12px;
+    border-radius:3px;
+    font-family:var(--font-body);
+    font-size:.88rem;
+    resize:vertical;
+  }
+  .forum-login-hint-inline{color:var(--text-faint); font-size:.84rem; font-family:var(--font-mono);}
+
   /* ---------- INSTALLATION ---------- */
   .install-wrap{
     display:grid;
@@ -578,7 +645,7 @@
   .field-row{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
   .field{display:flex; flex-direction:column; gap:6px;}
   .field label{font-size:.8rem; color:var(--text-dim); font-weight:600;}
-  .field input, .field select{
+  .field input, .field select, .field textarea{
     background:var(--bg-2);
     border:1px solid var(--border);
     color:var(--text);
@@ -587,12 +654,41 @@
     font-family:var(--font-body);
     font-size:.95rem;
     width:100%;
+    resize:vertical;
   }
-  .field input:focus-visible, .field select:focus-visible{
+  .field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible{
     outline:2px solid var(--celestial);
     outline-offset:1px;
     border-color:var(--celestial);
   }
+  .account-tabs{display:flex; gap:8px; margin-bottom:16px;}
+  .account-tab{
+    flex:1;
+    padding:10px;
+    border-radius:3px;
+    border:1px solid var(--border);
+    background:var(--surface-2);
+    color:var(--text-dim);
+    font-family:var(--font-body);
+    font-weight:700;
+    font-size:.85rem;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .account-tab.active{background:var(--gold); color:#161116; border-color:var(--gold);}
+  .account-loggedin{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:clamp(22px,4vw,32px);
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    align-items:flex-start;
+  }
+  .account-loggedin p{color:var(--text-dim);}
+  .account-loggedin strong{color:var(--gold-bright);}
+  .account-loggedin .row{display:flex; gap:10px; flex-wrap:wrap;}
   .field-hint{font-size:.76rem; color:var(--text-faint);}
   .form-msg{
     font-size:.86rem;
@@ -656,9 +752,12 @@
       <li><a href="#videos">Videos</a></li>
       <li><a href="#gallery">Gallery</a></li>
       <li><a href="#features">Features</a></li>
+      <li><a href="#forum">Forum</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#install">Installation</a></li>
+      <li><a href="https://skyforge.fandom.com/wiki/Skyforge_Wiki" target="_blank" rel="noopener">Wiki ↗</a></li>
     </ul>
+    <div class="nav-auth" id="nav-auth"></div>
     <a class="discord-link" href="https://discord.gg/D6p5zTqQwF" target="_blank" rel="noopener" aria-label="Join our Discord">
       <svg viewBox="0 0 127.14 96.36" fill="currentColor" aria-hidden="true"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.93,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.93,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
     </a>
@@ -703,6 +802,99 @@
           <div class="status-row"><dt>Cost</dt><dd>Free</dd></div>
           <div class="status-row"><dt>Run by</dt><dd>Community</dd></div>
         </dl>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="account">
+    <div class="container account-wrap">
+      <div class="account-copy">
+        <span class="eyebrow">Join the Ascension</span>
+        <h2 style="margin:10px 0 16px;">Create an Account</h2>
+        <p>Create your real Skyforge Revival account now. Your login already works — once the server launches, you'll sign in with it directly in-game. You can also log in right here on the website to post in the Forum.</p>
+        <div class="counter">
+          <span class="num" id="counter-num">–</span>
+          <span class="lbl">Immortals<br>already registered</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="account-tabs" id="account-tabs">
+          <button type="button" class="account-tab active" data-tab="register">Register</button>
+          <button type="button" class="account-tab" data-tab="login">Log In</button>
+        </div>
+
+        <form class="register" id="register-form">
+          <div class="field">
+            <label for="f-username">Username</label>
+            <input id="f-username" name="username" type="text" maxlength="24" autocomplete="off" placeholder="e.g. Aetherion" required>
+            <span class="field-hint">3–24 characters, reserved for your Revival account.</span>
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="f-password">Password</label>
+              <input id="f-password" name="password" type="password" autocomplete="new-password" minlength="6" placeholder="min. 6 characters" required>
+            </div>
+            <div class="field">
+              <label for="f-password2">Confirm Password</label>
+              <input id="f-password2" name="password2" type="password" autocomplete="new-password" minlength="6" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-class">Preferred Class</label>
+            <select id="f-class" name="class">
+              <option value="Paladin">Paladin</option>
+              <option value="Knight">Knight</option>
+              <option value="Kinetic">Kinetic</option>
+              <option value="Gunner">Gunner</option>
+              <option value="Alchemist">Alchemist</option>
+              <option value="Archer">Archer</option>
+              <option value="BountyHunter">BountyHunter</option>
+              <option value="Cryomant">Cryomant</option>
+              <option value="GroveWalker">GroveWalker</option>
+              <option value="LightBinder">LightBinder</option>
+              <option value="Monk">Monk</option>
+              <option value="Outlaw">Outlaw</option>
+              <option value="Firestarter">Firestarter</option>
+              <option value="Necromancer">Necromancer</option>
+              <option value="Slayer">Slayer</option>
+              <option value="Soundweaver">Soundweaver</option>
+              <option value="Revenant">Revenant</option>
+              <option value="Berserker">Berserker</option>
+              <option value="Witch">Witch</option>
+              <option value="Not sure yet">Not sure yet</option>
+            </select>
+          </div>
+          <div class="form-msg" id="form-msg"></div>
+          <button class="btn btn-primary" type="submit" id="submit-btn" style="justify-content:center;">Register</button>
+        </form>
+
+        <form class="register" id="login-form" style="display:none;">
+          <div class="field">
+            <label for="l-email">Email</label>
+            <input id="l-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          </div>
+          <div class="field">
+            <label for="l-password">Password</label>
+            <input id="l-password" name="password" type="password" autocomplete="current-password" placeholder="Your password" required>
+          </div>
+          <div class="form-msg" id="login-msg"></div>
+          <button class="btn btn-primary" type="submit" id="login-btn" style="justify-content:center;">Log In</button>
+        </form>
+
+        <div class="account-loggedin" id="account-loggedin" style="display:none;">
+          <p>You're logged in as <strong id="loggedin-name">–</strong>.</p>
+          <div class="row">
+            <a class="btn btn-ghost" href="#forum">Go to the Forum</a>
+            <button class="btn btn-ghost" id="account-logout-btn" type="button">Log Out</button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -942,6 +1134,38 @@
 
   <hr class="divider">
 
+  <section id="forum">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Community</span>
+        <h2>Player Forum</h2>
+        <p>Ask questions, share feedback, or just say hi. Anyone can read — log in above with your Revival account to post.</p>
+      </div>
+
+      <div class="forum-new" id="forum-new" style="display:none;">
+        <form class="register" id="forum-thread-form">
+          <div class="field">
+            <label for="ft-title">Title</label>
+            <input id="ft-title" maxlength="120" required placeholder="What's on your mind?">
+          </div>
+          <div class="field">
+            <label for="ft-body">Message</label>
+            <textarea id="ft-body" rows="4" maxlength="4000" required placeholder="Write your post…"></textarea>
+          </div>
+          <div class="form-msg" id="forum-thread-msg"></div>
+          <button class="btn btn-primary" type="submit" style="justify-content:center;">Post Thread</button>
+        </form>
+      </div>
+      <p class="forum-login-hint" id="forum-login-hint">Log in above to start a new thread.</p>
+
+      <div class="forum-list" id="forum-list">
+        <p class="forum-empty" id="forum-empty">Loading threads…</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
   <section id="faq">
     <div class="container">
       <div class="section-head">
@@ -1019,71 +1243,6 @@
           <button class="btn btn-ghost" type="button" disabled>Download</button>
         </div>
       </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <section id="account">
-    <div class="container account-wrap">
-      <div class="account-copy">
-        <span class="eyebrow">Join the Ascension</span>
-        <h2 style="margin:10px 0 16px;">Create an Account</h2>
-        <p>Create your real Skyforge Revival account now. Your login already works — once the server launches, you'll sign in with it directly in-game.</p>
-        <div class="counter">
-          <span class="num" id="counter-num">–</span>
-          <span class="lbl">Immortals<br>already registered</span>
-        </div>
-      </div>
-
-      <form class="register" id="register-form">
-        <div class="field">
-          <label for="f-username">Username</label>
-          <input id="f-username" name="username" type="text" maxlength="24" autocomplete="off" placeholder="e.g. Aetherion" required>
-          <span class="field-hint">3–24 characters, reserved for your Revival account.</span>
-        </div>
-        <div class="field">
-          <label for="f-email">Email</label>
-          <input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="f-password">Password</label>
-            <input id="f-password" name="password" type="password" autocomplete="new-password" minlength="6" placeholder="min. 6 characters" required>
-          </div>
-          <div class="field">
-            <label for="f-password2">Confirm Password</label>
-            <input id="f-password2" name="password2" type="password" autocomplete="new-password" minlength="6" required>
-          </div>
-        </div>
-        <div class="field">
-          <label for="f-class">Preferred Class</label>
-          <select id="f-class" name="class">
-            <option value="Paladin">Paladin</option>
-            <option value="Knight">Knight</option>
-            <option value="Kinetic">Kinetic</option>
-            <option value="Gunner">Gunner</option>
-            <option value="Alchemist">Alchemist</option>
-            <option value="Archer">Archer</option>
-            <option value="BountyHunter">BountyHunter</option>
-            <option value="Cryomant">Cryomant</option>
-            <option value="GroveWalker">GroveWalker</option>
-            <option value="LightBinder">LightBinder</option>
-            <option value="Monk">Monk</option>
-            <option value="Outlaw">Outlaw</option>
-            <option value="Firestarter">Firestarter</option>
-            <option value="Necromancer">Necromancer</option>
-            <option value="Slayer">Slayer</option>
-            <option value="Soundweaver">Soundweaver</option>
-            <option value="Revenant">Revenant</option>
-            <option value="Berserker">Berserker</option>
-            <option value="Witch">Witch</option>
-            <option value="Not sure yet">Not sure yet</option>
-          </select>
-        </div>
-        <div class="form-msg" id="form-msg"></div>
-        <button class="btn btn-primary" type="submit" id="submit-btn" style="justify-content:center;">Register</button>
-      </form>
     </div>
   </section>
 </main>
@@ -1242,10 +1401,10 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
   import {
-    getAuth, createUserWithEmailAndPassword, deleteUser
+    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser
   } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
   import {
-    getFirestore, doc, getDoc, setDoc, collection, onSnapshot, serverTimestamp
+    getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, limit, getDocs, onSnapshot, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
   // TODO: replace with your real Firebase project configuration
@@ -1340,7 +1499,7 @@
               });
             })
             .then(function(){
-              showMsg('Account created! You can log in with it once the server launches.', 'success');
+              showMsg('Account created! You’re now logged in — feel free to post in the Forum.', 'success');
               form.reset();
               resetBtn();
             })
@@ -1364,6 +1523,242 @@
         resetBtn();
       });
     });
+
+    // ---------- login form ----------
+    var loginForm = document.getElementById('login-form');
+    var loginMsg = document.getElementById('login-msg');
+    var loginBtn = document.getElementById('login-btn');
+
+    function showLoginMsg(text, type){
+      loginMsg.textContent = text;
+      loginMsg.className = 'form-msg show ' + type;
+    }
+
+    if(loginForm){
+      loginForm.addEventListener('submit', function(ev){
+        ev.preventDefault();
+        var email = loginForm.email.value.trim();
+        var password = loginForm.password.value;
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in …';
+        signInWithEmailAndPassword(auth, email, password).then(function(){
+          showLoginMsg('Logged in!', 'success');
+          loginForm.reset();
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Log In';
+        }).catch(function(err){
+          var code = err && err.code;
+          if(code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found'){
+            showLoginMsg('Wrong email or password.', 'error');
+          } else if(code === 'auth/invalid-email'){
+            showLoginMsg('Please enter a valid email address.', 'error');
+          } else {
+            showLoginMsg('Login isn’t possible right now. Please try again later.', 'error');
+          }
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Log In';
+        });
+      });
+    }
+
+    // ---------- account tabs ----------
+    var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.account-tab'));
+    tabButtons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        tabButtons.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var tab = btn.getAttribute('data-tab');
+        form.style.display = (tab === 'register') ? 'flex' : 'none';
+        loginForm.style.display = (tab === 'login') ? 'flex' : 'none';
+      });
+    });
+
+    // ---------- global auth state ----------
+    var navAuth = document.getElementById('nav-auth');
+    var accountLoggedIn = document.getElementById('account-loggedin');
+    var accountTabsWrap = document.getElementById('account-tabs');
+    var loggedInName = document.getElementById('loggedin-name');
+    var forumNew = document.getElementById('forum-new');
+    var forumLoginHint = document.getElementById('forum-login-hint');
+    var currentUser = null;
+    var currentUsername = 'Immortal';
+
+    function renderAuthUI(){
+      if(currentUser){
+        navAuth.innerHTML = 'Hi, <strong>' + currentUsername + '</strong> <button type="button" id="nav-logout-btn">Log Out</button>';
+        var navLogoutBtn = document.getElementById('nav-logout-btn');
+        if(navLogoutBtn){ navLogoutBtn.addEventListener('click', function(){ signOut(auth); }); }
+        accountTabsWrap.style.display = 'none';
+        form.style.display = 'none';
+        loginForm.style.display = 'none';
+        accountLoggedIn.style.display = 'flex';
+        loggedInName.textContent = currentUsername;
+        forumNew.style.display = 'block';
+        forumLoginHint.style.display = 'none';
+      } else {
+        navAuth.innerHTML = '<a href="#account">Log In</a>';
+        accountTabsWrap.style.display = 'flex';
+        accountLoggedIn.style.display = 'none';
+        var activeTab = document.querySelector('.account-tab.active');
+        var tab = activeTab ? activeTab.getAttribute('data-tab') : 'register';
+        form.style.display = (tab === 'register') ? 'flex' : 'none';
+        loginForm.style.display = (tab === 'login') ? 'flex' : 'none';
+        forumNew.style.display = 'none';
+        forumLoginHint.style.display = 'block';
+      }
+    }
+
+    var logoutBtn = document.getElementById('account-logout-btn');
+    if(logoutBtn){ logoutBtn.addEventListener('click', function(){ signOut(auth); }); }
+
+    onAuthStateChanged(auth, function(user){
+      currentUser = user;
+      if(user){
+        getDoc(doc(db, 'accounts', user.uid)).then(function(snap){
+          currentUsername = (snap.exists() && snap.data().username) ? snap.data().username : 'Immortal';
+          renderAuthUI();
+        }).catch(function(){ renderAuthUI(); });
+      } else {
+        currentUsername = 'Immortal';
+        renderAuthUI();
+      }
+    });
+
+    // ---------- forum ----------
+    var forumList = document.getElementById('forum-list');
+    var forumEmpty = document.getElementById('forum-empty');
+    var forumThreadForm = document.getElementById('forum-thread-form');
+    var forumThreadMsg = document.getElementById('forum-thread-msg');
+    var htmlEscapes = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+
+    function escapeHtml(s){
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return htmlEscapes[c]; });
+    }
+
+    function formatDate(ts){
+      try{
+        var d = ts && ts.toDate ? ts.toDate() : null;
+        if(!d) return '';
+        return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+      }catch(e){ return ''; }
+    }
+
+    function loadReplies(threadId, container){
+      container.innerHTML = '<p class="forum-loading">Loading replies…</p>';
+      var repliesRef = collection(db, 'forumThreads', threadId, 'replies');
+      getDocs(query(repliesRef, orderBy('createdAt', 'asc'))).then(function(snap){
+        if(snap.empty){
+          container.innerHTML = '<p class="forum-loading">No replies yet — be the first.</p>';
+          return;
+        }
+        var html = '';
+        snap.forEach(function(d){
+          var r = d.data();
+          html += '<div class="forum-reply"><div class="fr-meta">' + escapeHtml(r.authorName || 'Immortal') + ' · ' + formatDate(r.createdAt) + '</div><div class="fr-body">' + escapeHtml(r.body) + '</div></div>';
+        });
+        container.innerHTML = html;
+      }).catch(function(){
+        container.innerHTML = '<p class="forum-loading">Couldn’t load replies.</p>';
+      });
+    }
+
+    function renderThreads(snap){
+      forumList.innerHTML = '';
+      if(snap.empty){
+        forumEmpty.textContent = 'No threads yet — start the first one!';
+        forumList.appendChild(forumEmpty);
+        return;
+      }
+      snap.forEach(function(d){
+        var t = d.data();
+        var id = d.id;
+        var details = document.createElement('details');
+        details.className = 'forum-thread';
+        details.innerHTML =
+          '<summary><span class="ft-title">' + escapeHtml(t.title) + '</span>' +
+          '<span class="ft-meta">by ' + escapeHtml(t.authorName || 'Immortal') + ' · ' + formatDate(t.createdAt) + '</span></summary>' +
+          '<div class="forum-thread-body">' +
+            '<p class="ft-post">' + escapeHtml(t.body) + '</p>' +
+            '<div class="forum-replies"><p class="forum-loading">Loading replies…</p></div>' +
+            (currentUser
+              ? '<form class="forum-reply-form"><textarea rows="2" maxlength="2000" placeholder="Write a reply…" required></textarea><button class="btn btn-ghost" type="submit">Reply</button></form>'
+              : '<p class="forum-login-hint-inline">Log in above to reply.</p>') +
+          '</div>';
+
+        var loaded = false;
+        details.addEventListener('toggle', function(){
+          if(details.open && !loaded){
+            loaded = true;
+            loadReplies(id, details.querySelector('.forum-replies'));
+          }
+        });
+
+        var replyForm = details.querySelector('.forum-reply-form');
+        if(replyForm){
+          replyForm.addEventListener('submit', function(ev){
+            ev.preventDefault();
+            if(!currentUser) return;
+            var textarea = replyForm.querySelector('textarea');
+            var body = textarea.value.trim();
+            if(!body) return;
+            var replyBtn = replyForm.querySelector('button');
+            replyBtn.disabled = true;
+            addDoc(collection(db, 'forumThreads', id, 'replies'), {
+              body: body,
+              authorUid: currentUser.uid,
+              authorName: currentUsername,
+              createdAt: serverTimestamp()
+            }).then(function(){
+              textarea.value = '';
+              replyBtn.disabled = false;
+              loadReplies(id, details.querySelector('.forum-replies'));
+            }).catch(function(){
+              replyBtn.disabled = false;
+              alert('Could not post reply. Please try again.');
+            });
+          });
+        }
+
+        forumList.appendChild(details);
+      });
+    }
+
+    try{
+      onSnapshot(query(collection(db, 'forumThreads'), orderBy('createdAt', 'desc'), limit(50)), renderThreads, function(){
+        forumEmpty.textContent = 'Couldn’t load the forum right now.';
+      });
+    }catch(e){}
+
+    if(forumThreadForm){
+      forumThreadForm.addEventListener('submit', function(ev){
+        ev.preventDefault();
+        if(!currentUser) return;
+        var title = document.getElementById('ft-title').value.trim();
+        var body = document.getElementById('ft-body').value.trim();
+        if(!title || !body) return;
+        var threadBtn = forumThreadForm.querySelector('button[type="submit"]');
+        threadBtn.disabled = true;
+        threadBtn.textContent = 'Posting …';
+        addDoc(collection(db, 'forumThreads'), {
+          title: title,
+          body: body,
+          authorUid: currentUser.uid,
+          authorName: currentUsername,
+          createdAt: serverTimestamp()
+        }).then(function(){
+          forumThreadForm.reset();
+          forumThreadMsg.textContent = 'Thread posted!';
+          forumThreadMsg.className = 'form-msg show success';
+          threadBtn.disabled = false;
+          threadBtn.textContent = 'Post Thread';
+        }).catch(function(){
+          forumThreadMsg.textContent = 'Could not post your thread. Please try again.';
+          forumThreadMsg.className = 'form-msg show error';
+          threadBtn.disabled = false;
+          threadBtn.textContent = 'Post Thread';
+        });
+      });
+    }
   }
 </script>
 
