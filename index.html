@@ -523,6 +523,7 @@
   .forum-login-hint{color:var(--text-faint); font-size:.85rem; font-family:var(--font-mono); margin-bottom:18px;}
   .forum-list{display:flex; flex-direction:column; gap:14px;}
   .forum-empty{color:var(--text-faint); font-size:.9rem;}
+  .forum-toggle-wrap{display:flex; justify-content:center; margin-top:4px;}
   .forum-thread{
     background:var(--surface);
     border:1px solid var(--border);
@@ -758,10 +759,10 @@
       <li><a href="#about">About</a></li>
       <li><a href="#roadmap">Roadmap</a></li>
       <li><a href="#videos">Videos</a></li>
+      <li><a href="#faq">FAQ</a></li>
       <li><a href="#gallery">Gallery</a></li>
       <li><a href="#features">Features</a></li>
       <li><a href="#forum">Forum</a></li>
-      <li><a href="#faq">FAQ</a></li>
       <li><a href="#install">Installation</a></li>
       <li><a href="https://skyforge.fandom.com/wiki/Skyforge_Wiki" target="_blank" rel="noopener">Wiki ↗</a></li>
     </ul>
@@ -929,28 +930,28 @@
             </ul>
           </div>
         </div>
-        <div class="roadmap-item active">
+        <div class="roadmap-item done">
           <div class="roadmap-line"><div class="roadmap-dot"></div><div class="roadmap-connector"></div></div>
           <div class="roadmap-body">
-            <h3>Getting Onto Aelion <span class="roadmap-status">In Progress</span></h3>
+            <h3>Getting Onto Aelion <span class="roadmap-status">Done</span></h3>
             <p>Turning a registered account into an actual Immortal standing in the game world.</p>
             <ul class="roadmap-checklist">
               <li class="done"><svg class="tick" viewBox="0 0 24 24" fill="none"><path d="M4 12 L10 18 L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Launcher connects to the Revival servers</li>
               <li class="done"><svg class="tick" viewBox="0 0 24 24" fill="none"><path d="M4 12 L10 18 L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Login with your Revival account works</li>
               <li class="done"><svg class="tick" viewBox="0 0 24 24" fill="none"><path d="M4 12 L10 18 L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Character creation screen</li>
-              <li class="now"><span class="dot-open"></span>First steps in the tutorial area</li>
+              <li class="done"><svg class="tick" viewBox="0 0 24 24" fill="none"><path d="M4 12 L10 18 L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>First steps in the tutorial area</li>
             </ul>
           </div>
         </div>
-        <div class="roadmap-item">
+        <div class="roadmap-item active">
           <div class="roadmap-line"><div class="roadmap-dot"></div><div class="roadmap-connector"></div></div>
           <div class="roadmap-body">
-            <h3>First Playable Zones <span class="roadmap-status">Planned</span></h3>
+            <h3>First Playable Zones <span class="roadmap-status">In Progress</span></h3>
             <p>Early areas and starter quests working end to end, so you can actually walk around and play.</p>
             <ul class="roadmap-checklist">
+              <li class="now"><span class="dot-open"></span>First playable classes</li>
               <li><span class="dot-open"></span>Starting island fully explorable</li>
               <li><span class="dot-open"></span>Early quests &amp; story missions</li>
-              <li><span class="dot-open"></span>First playable classes</li>
             </ul>
           </div>
         </div>
@@ -1043,6 +1044,48 @@
             <p>Our first look at Skyforge Revival itself — early footage of the emulator actually coming together.</p>
           </div>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="faq">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">More Info</span>
+        <h2>Frequently Asked Questions</h2>
+        <p>The questions we hear the most, answered plainly.</p>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Is Skyforge Revival legal?</summary>
+          <p>Skyforge Revival is a non-commercial, fan-run project built by players who wanted to keep the game alive after the official servers closed. We don't sell anything, and we're not affiliated with the original rightsholders. We do our best to run this responsibly, but as with any private server project, you should decide for yourself whether you're comfortable joining.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Will it cost anything to play?</summary>
+          <p>No. Creating an account and playing on Skyforge Revival is completely free and always will be.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need to own the original game?</summary>
+          <p>Yes — you'll need the original Skyforge client files installed on your PC. We don't host or distribute the game client itself, only the launcher that connects it to our servers.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is it going to be old era or new era Skyforge?</summary>
+          <p>A mix of both. We're building on the latest version of the game, but bringing back the old Atlas (the original zones and progression path), along with some rebalancing to fix issues that never got addressed.</p>
+        </details>
+        <details class="faq-item">
+          <summary>When will the server launch?</summary>
+          <p>We don't have a fixed date — this is a volunteer project and things take the time they take. Check the Roadmap above for where we currently stand, or join our Discord for the latest updates.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Will my account or characters be wiped later?</summary>
+          <p>During early testing phases, wipes are common as things get rebuilt and improved. We'll clearly announce any wipe before it happens, and let you know once the server is stable for the long term.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How can I help the project?</summary>
+          <p>Join our Discord! We're always happy to have testers, feedback, and community members helping each other out. No technical skills required.</p>
+        </details>
       </div>
     </div>
   </section>
@@ -1178,48 +1221,6 @@
 
       <div class="forum-list" id="forum-list">
         <p class="forum-empty" id="forum-empty">Loading threads…</p>
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <section id="faq">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">More Info</span>
-        <h2>Frequently Asked Questions</h2>
-        <p>The questions we hear the most, answered plainly.</p>
-      </div>
-      <div class="faq-list">
-        <details class="faq-item">
-          <summary>Is Skyforge Revival legal?</summary>
-          <p>Skyforge Revival is a non-commercial, fan-run project built by players who wanted to keep the game alive after the official servers closed. We don't sell anything, and we're not affiliated with the original rightsholders. We do our best to run this responsibly, but as with any private server project, you should decide for yourself whether you're comfortable joining.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Will it cost anything to play?</summary>
-          <p>No. Creating an account and playing on Skyforge Revival is completely free and always will be.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Do I need to own the original game?</summary>
-          <p>Yes — you'll need the original Skyforge client files installed on your PC. We don't host or distribute the game client itself, only the launcher that connects it to our servers.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Is it going to be old era or new era Skyforge?</summary>
-          <p>A mix of both. We're building on the latest version of the game, but bringing back the old Atlas (the original zones and progression path), along with some rebalancing to fix issues that never got addressed.</p>
-        </details>
-        <details class="faq-item">
-          <summary>When will the server launch?</summary>
-          <p>We don't have a fixed date — this is a volunteer project and things take the time they take. Check the Roadmap above for where we currently stand, or join our Discord for the latest updates.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Will my account or characters be wiped later?</summary>
-          <p>During early testing phases, wipes are common as things get rebuilt and improved. We'll clearly announce any wipe before it happens, and let you know once the server is stable for the long term.</p>
-        </details>
-        <details class="faq-item">
-          <summary>How can I help the project?</summary>
-          <p>Join our Discord! We're always happy to have testers, feedback, and community members helping each other out. No technical skills required.</p>
-        </details>
       </div>
     </div>
   </section>
@@ -1684,13 +1685,91 @@
       });
     }
 
-    function renderThreads(snap){
+    var forumExpanded = false;
+    var forumDocsCache = [];
+    var FORUM_PREVIEW_COUNT = 5;
+
+    function buildThreadEl(d){
+      var t = d.data();
+      var id = d.id;
+      var details = document.createElement('details');
+      details.className = 'forum-thread' + (t.pinned ? ' pinned' : '');
+      details.innerHTML =
+        '<summary><span class="ft-title">' + (t.pinned ? '<span class="ft-pin">📌 Pinned</span> ' : '') + escapeHtml(t.title) + '</span>' +
+        '<span class="ft-meta">by ' + escapeHtml(t.authorName || 'Immortal') + ' · ' + formatDate(t.createdAt) + '</span></summary>' +
+        '<div class="forum-thread-body">' +
+          '<p class="ft-post">' + escapeHtml(t.body) + '</p>' +
+          '<div class="forum-replies"><p class="forum-loading">Loading replies…</p></div>' +
+          (currentUser
+            ? '<form class="forum-reply-form"><textarea rows="2" maxlength="2000" placeholder="Write a reply…" required></textarea><button class="btn btn-ghost" type="submit">Reply</button></form>'
+            : '<p class="forum-login-hint-inline">Log in above to reply.</p>') +
+        '</div>';
+
+      var loaded = false;
+      details.addEventListener('toggle', function(){
+        if(details.open && !loaded){
+          loaded = true;
+          loadReplies(id, details.querySelector('.forum-replies'));
+        }
+      });
+
+      var replyForm = details.querySelector('.forum-reply-form');
+      if(replyForm){
+        replyForm.addEventListener('submit', function(ev){
+          ev.preventDefault();
+          if(!currentUser) return;
+          var textarea = replyForm.querySelector('textarea');
+          var body = textarea.value.trim();
+          if(!body) return;
+          var replyBtn = replyForm.querySelector('button');
+          replyBtn.disabled = true;
+          addDoc(collection(db, 'forumThreads', id, 'replies'), {
+            body: body,
+            authorUid: currentUser.uid,
+            authorName: currentUsername,
+            createdAt: serverTimestamp()
+          }).then(function(){
+            textarea.value = '';
+            replyBtn.disabled = false;
+            loadReplies(id, details.querySelector('.forum-replies'));
+          }).catch(function(){
+            replyBtn.disabled = false;
+            alert('Could not post reply. Please try again.');
+          });
+        });
+      }
+
+      return details;
+    }
+
+    function renderThreadList(){
       forumList.innerHTML = '';
-      if(snap.empty){
+      if(forumDocsCache.length === 0){
         forumEmpty.textContent = 'No threads yet — start the first one!';
         forumList.appendChild(forumEmpty);
         return;
       }
+      var visible = forumExpanded ? forumDocsCache : forumDocsCache.slice(0, FORUM_PREVIEW_COUNT);
+      visible.forEach(function(d){
+        forumList.appendChild(buildThreadEl(d));
+      });
+      if(forumDocsCache.length > FORUM_PREVIEW_COUNT){
+        var toggleWrap = document.createElement('div');
+        toggleWrap.className = 'forum-toggle-wrap';
+        var toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.className = 'btn btn-ghost';
+        toggleBtn.textContent = forumExpanded ? 'Show Fewer Threads' : 'Show All Threads (' + forumDocsCache.length + ')';
+        toggleBtn.addEventListener('click', function(){
+          forumExpanded = !forumExpanded;
+          renderThreadList();
+        });
+        toggleWrap.appendChild(toggleBtn);
+        forumList.appendChild(toggleWrap);
+      }
+    }
+
+    function renderThreads(snap){
       var docs = [];
       snap.forEach(function(d){ docs.push(d); });
       docs.sort(function(a, b){
@@ -1698,58 +1777,8 @@
         var pb = b.data().pinned ? 1 : 0;
         return pb - pa; // pinned threads first, otherwise keep createdAt-desc order from the query
       });
-      docs.forEach(function(d){
-        var t = d.data();
-        var id = d.id;
-        var details = document.createElement('details');
-        details.className = 'forum-thread' + (t.pinned ? ' pinned' : '');
-        details.innerHTML =
-          '<summary><span class="ft-title">' + (t.pinned ? '<span class="ft-pin">📌 Pinned</span> ' : '') + escapeHtml(t.title) + '</span>' +
-          '<span class="ft-meta">by ' + escapeHtml(t.authorName || 'Immortal') + ' · ' + formatDate(t.createdAt) + '</span></summary>' +
-          '<div class="forum-thread-body">' +
-            '<p class="ft-post">' + escapeHtml(t.body) + '</p>' +
-            '<div class="forum-replies"><p class="forum-loading">Loading replies…</p></div>' +
-            (currentUser
-              ? '<form class="forum-reply-form"><textarea rows="2" maxlength="2000" placeholder="Write a reply…" required></textarea><button class="btn btn-ghost" type="submit">Reply</button></form>'
-              : '<p class="forum-login-hint-inline">Log in above to reply.</p>') +
-          '</div>';
-
-        var loaded = false;
-        details.addEventListener('toggle', function(){
-          if(details.open && !loaded){
-            loaded = true;
-            loadReplies(id, details.querySelector('.forum-replies'));
-          }
-        });
-
-        var replyForm = details.querySelector('.forum-reply-form');
-        if(replyForm){
-          replyForm.addEventListener('submit', function(ev){
-            ev.preventDefault();
-            if(!currentUser) return;
-            var textarea = replyForm.querySelector('textarea');
-            var body = textarea.value.trim();
-            if(!body) return;
-            var replyBtn = replyForm.querySelector('button');
-            replyBtn.disabled = true;
-            addDoc(collection(db, 'forumThreads', id, 'replies'), {
-              body: body,
-              authorUid: currentUser.uid,
-              authorName: currentUsername,
-              createdAt: serverTimestamp()
-            }).then(function(){
-              textarea.value = '';
-              replyBtn.disabled = false;
-              loadReplies(id, details.querySelector('.forum-replies'));
-            }).catch(function(){
-              replyBtn.disabled = false;
-              alert('Could not post reply. Please try again.');
-            });
-          });
-        }
-
-        forumList.appendChild(details);
-      });
+      forumDocsCache = docs;
+      renderThreadList();
     }
 
     try{
