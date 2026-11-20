@@ -279,8 +279,12 @@
     text-decoration:underline;
   }
 
-  /* Hide Google Translate's own UI chrome - we drive it via our own widget */
-  .goog-te-banner-frame.skiptranslate{display:none !important;}
+  /* Google Translate's own notice bar: pin it to the bottom instead of the
+     default top placement, and keep the page from being pushed down/up. */
+  .goog-te-banner-frame.skiptranslate{
+    top:auto !important;
+    bottom:0 !important;
+  }
   body{top:0px !important;}
   .goog-te-gadget-icon{display:none !important;}
 
@@ -1387,7 +1391,7 @@
   <div class="container">
     <p class="footer-disclaimer">Skyforge Revival is an unofficial, non-commercial fan project and is not affiliated with Allods Team, MY.GAMES, or any other original rights holders of Skyforge. All trademarks and game names belong to their respective owners.</p>
     <div class="footer-inner">
-      <span>© 2026 Skyforge Revival – Community Project</span>
+      <span>Skyforge Revival – Community Project</span>
       <span>skyforge.revival@tutamail.com</span>
     </div>
   </div>
