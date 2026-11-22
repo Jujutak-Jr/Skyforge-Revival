@@ -1666,42 +1666,50 @@
 
 <!--
   ============================================================
-  FIREBASE SETUP (account registration)
+  ACCOUNTS AND FORUM
   ============================================================
-  1. Create a Firebase project: https://console.firebase.google.com
-  2. Authentication -> Sign-in method -> enable "Email/Password"
-  3. Firestore Database -> create database (production mode)
-  4. Project settings -> "Your apps" -> add a Web app -> copy the config
-  5. Replace the firebaseConfig below with your real values
-  6. Paste the rules from firestore.rules into the Firebase Console
-     (Firestore Database -> Rules)
+  Registration, login and the forum run on the Skyforge Revival server's
+  API (the odinemu login API, the same one the launcher uses). Since
+  2026-11-22 they no longer use Firebase. The API is documented in the
+  server repository: docs/install/web-accounts.md.
+  The session token lives in this browser's localStorage under
+  "sfr_session" and is sent as "Authorization: Bearer <token>".
   ============================================================
 -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-  import {
-    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser
-  } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-  import {
-    getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, limit, getDocs, onSnapshot, serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+<script>
+(function(){
+  var API = 'https://srv1.skyforgerevival.com';
+  var SESSION_KEY = 'sfr_session';
 
-  // TODO: replace with your real Firebase project configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyAlSvYnPYFRIU53fK7O1gYuV1D_Gc33h_g",
-    authDomain: "skyforge-revival.firebaseapp.com",
-    projectId: "skyforge-revival",
-    storageBucket: "skyforge-revival.firebasestorage.app",
-    messagingSenderId: "1068846841821",
-    appId: "1:1068846841821:web:3ed9c9e69620de92da0034"
-  };
+  function getToken(){ try{ return localStorage.getItem(SESSION_KEY); }catch(e){ return null; } }
+  function setToken(t){ try{ if(t){ localStorage.setItem(SESSION_KEY, t); } else { localStorage.removeItem(SESSION_KEY); } }catch(e){} }
 
-  const isConfigured = firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('YOUR_') !== 0;
+  // One API call. Resolves with the JSON reply; rejects with {status, code}.
+  function api(method, path, body){
+    var headers = {'Accept': 'application/json'};
+    var token = getToken();
+    if(token){ headers['Authorization'] = 'Bearer ' + token; }
+    if(body !== undefined){ headers['Content-Type'] = 'application/json'; }
+    return fetch(API + path, {method: method, headers: headers, body: body === undefined ? undefined : JSON.stringify(body)})
+      .then(function(res){
+        return res.text().then(function(text){
+          var data = null;
+          try{ data = text ? JSON.parse(text) : null; }catch(e){}
+          if(!res.ok){ throw {status: res.status, code: data && data.error}; }
+          return data;
+        });
+      }, function(){ throw {status: 0, code: 'network'}; });
+  }
 
   var form = document.getElementById('register-form');
   var msg = document.getElementById('form-msg');
   var submitBtn = document.getElementById('submit-btn');
   var counterEl = document.getElementById('counter-num');
+  var htmlEscapes = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return htmlEscapes[c]; });
+  }
 
   function showMsg(text, type){
     msg.textContent = text;
@@ -1717,363 +1725,331 @@
     return name.trim().toLowerCase().replace(/[^a-z0-9_\-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,32);
   }
 
-  if(!isConfigured){
-    showMsg('Registration isn’t set up yet (Firebase configuration missing).', 'info');
-  } else {
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  // ---------- account counter ----------
+  api('GET', '/api/stats').then(function(s){
+    counterEl.textContent = (s && typeof s.accounts === 'number') ? s.accounts : '–';
+  }).catch(function(){ counterEl.textContent = '–'; });
 
-    try{
-      onSnapshot(collection(db, 'accounts'), function(snap){
-        counterEl.textContent = snap.size;
-      }, function(){ counterEl.textContent = '–'; });
-    }catch(e){}
+  // ---------- auth state ----------
+  var currentUser = null;
+  var currentUsername = 'Immortal';
 
-    form.addEventListener('submit', function(ev){
-      ev.preventDefault();
+  function signedIn(user, token){
+    if(token){ setToken(token); }
+    currentUser = user;
+    currentUsername = (user && user.username) ? user.username : 'Immortal';
+    renderAuthUI();
+    renderThreadList();
+  }
 
-      var username = form.username.value.trim();
-      var email = form.email.value.trim();
-      var password = form.password.value;
-      var password2 = form.password2.value;
-      var klass = form.class.value;
+  function signOut(){
+    api('POST', '/api/auth/logout').catch(function(){});
+    setToken(null);
+    currentUser = null;
+    currentUsername = 'Immortal';
+    renderAuthUI();
+    renderThreadList();
+  }
 
-      if(username.length < 3){
-        showMsg('Please choose a username with at least 3 characters.', 'error');
-        return;
-      }
-      var slug = slugify(username);
-      if(!slug){
-        showMsg('That username doesn’t contain any valid characters.', 'error');
-        return;
-      }
-      if(password.length < 6){
-        showMsg('Password must be at least 6 characters long.', 'error');
-        return;
-      }
-      if(password !== password2){
-        showMsg('Passwords don’t match.', 'error');
-        return;
-      }
+  // ---------- registration ----------
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Checking …';
+    var username = form.username.value.trim();
+    var email = form.email.value.trim();
+    var password = form.password.value;
+    var password2 = form.password2.value;
+    var klass = form['class'].value;
 
-      var usernameRef = doc(db, 'usernames', slug);
+    if(username.length < 3){
+      showMsg('Please choose a username with at least 3 characters.', 'error');
+      return;
+    }
+    if(!slugify(username)){
+      showMsg('That username doesn’t contain any valid characters.', 'error');
+      return;
+    }
+    if(password.length < 6){
+      showMsg('Password must be at least 6 characters long.', 'error');
+      return;
+    }
+    if(password !== password2){
+      showMsg('Passwords don’t match.', 'error');
+      return;
+    }
 
-      getDoc(usernameRef).then(function(snap){
-        if(snap.exists()){
-          showMsg('That username is already taken. Please choose another.', 'error');
-          resetBtn();
-          return null;
-        }
-        return createUserWithEmailAndPassword(auth, email, password).then(function(cred){
-          return setDoc(usernameRef, { uid: cred.user.uid, createdAt: serverTimestamp() })
-            .then(function(){
-              return setDoc(doc(db, 'accounts', cred.user.uid), {
-                username: username,
-                class: klass,
-                createdAt: serverTimestamp()
-              });
-            })
-            .then(function(){
-              showMsg('Account created! You’re now logged in — feel free to post in the Forum.', 'success');
-              form.reset();
-              resetBtn();
-            })
-            .catch(function(){
-              // Username was claimed by someone else in the meantime -> roll back the account
-              showMsg('That username was just taken. Please choose another.', 'error');
-              return deleteUser(cred.user).catch(function(){}).then(resetBtn);
-            });
-        });
-      }).catch(function(err){
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Checking …';
+
+    api('POST', '/api/auth/register', {username: username, email: email, password: password, 'class': klass})
+      .then(function(reply){
+        signedIn(reply.user, reply.token);
+        showMsg('Account created! You’re now logged in — feel free to post in the Forum.', 'success');
+        form.reset();
+        resetBtn();
+        api('GET', '/api/stats').then(function(s){ if(s){ counterEl.textContent = s.accounts; } }).catch(function(){});
+      })
+      .catch(function(err){
         var code = err && err.code;
-        if(code === 'auth/email-already-in-use'){
+        if(code === 'username_taken'){
+          showMsg('That username is already taken. Please choose another.', 'error');
+        } else if(code === 'email_taken'){
           showMsg('An account with this email already exists.', 'error');
-        } else if(code === 'auth/invalid-email'){
+        } else if(code === 'email_invalid'){
           showMsg('Please enter a valid email address.', 'error');
-        } else if(code === 'auth/weak-password'){
-          showMsg('Password is too weak (min. 6 characters).', 'error');
+        } else if(code === 'password_invalid'){
+          showMsg('Password must be between 6 and 256 characters long.', 'error');
+        } else if(code === 'username_invalid'){
+          showMsg('Please choose a username with 3 to 64 characters.', 'error');
+        } else if(err && err.status === 429){
+          showMsg('Too many attempts. Please wait a minute and try again.', 'error');
         } else {
           showMsg('Registration isn’t possible right now. Please try again later.', 'error');
         }
         resetBtn();
       });
-    });
+  });
 
-    // ---------- login form ----------
-    var loginForm = document.getElementById('login-form');
-    var loginMsg = document.getElementById('login-msg');
-    var loginBtn = document.getElementById('login-btn');
+  // ---------- login form ----------
+  var loginForm = document.getElementById('login-form');
+  var loginMsg = document.getElementById('login-msg');
+  var loginBtn = document.getElementById('login-btn');
 
-    function showLoginMsg(text, type){
-      loginMsg.textContent = text;
-      loginMsg.className = 'form-msg show ' + type;
-    }
+  function showLoginMsg(text, type){
+    loginMsg.textContent = text;
+    loginMsg.className = 'form-msg show ' + type;
+  }
 
-    if(loginForm){
-      loginForm.addEventListener('submit', function(ev){
-        ev.preventDefault();
-        var email = loginForm.email.value.trim();
-        var password = loginForm.password.value;
-        loginBtn.disabled = true;
-        loginBtn.textContent = 'Logging in …';
-        signInWithEmailAndPassword(auth, email, password).then(function(){
-          showLoginMsg('Logged in!', 'success');
-          loginForm.reset();
-          loginBtn.disabled = false;
-          loginBtn.textContent = 'Log In';
-        }).catch(function(err){
-          var code = err && err.code;
-          if(code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found'){
-            showLoginMsg('Wrong email or password.', 'error');
-          } else if(code === 'auth/invalid-email'){
-            showLoginMsg('Please enter a valid email address.', 'error');
-          } else {
-            showLoginMsg('Login isn’t possible right now. Please try again later.', 'error');
-          }
-          loginBtn.disabled = false;
-          loginBtn.textContent = 'Log In';
-        });
-      });
-    }
-
-    // ---------- account tabs ----------
-    var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.account-tab'));
-    tabButtons.forEach(function(btn){
-      btn.addEventListener('click', function(){
-        tabButtons.forEach(function(b){ b.classList.remove('active'); });
-        btn.classList.add('active');
-        var tab = btn.getAttribute('data-tab');
-        form.style.display = (tab === 'register') ? 'flex' : 'none';
-        loginForm.style.display = (tab === 'login') ? 'flex' : 'none';
-      });
-    });
-
-    // ---------- global auth state ----------
-    var navAuth = document.getElementById('nav-auth');
-    var accountLoggedIn = document.getElementById('account-loggedin');
-    var accountTabsWrap = document.getElementById('account-tabs');
-    var loggedInName = document.getElementById('loggedin-name');
-    var forumNew = document.getElementById('forum-new');
-    var forumLoginHint = document.getElementById('forum-login-hint');
-    var currentUser = null;
-    var currentUsername = 'Immortal';
-
-    function renderAuthUI(){
-      if(currentUser){
-        navAuth.innerHTML = 'Hi, <strong>' + currentUsername + '</strong> <button type="button" id="nav-logout-btn">Log Out</button>';
-        var navLogoutBtn = document.getElementById('nav-logout-btn');
-        if(navLogoutBtn){ navLogoutBtn.addEventListener('click', function(){ signOut(auth); }); }
-        accountTabsWrap.style.display = 'none';
-        form.style.display = 'none';
-        loginForm.style.display = 'none';
-        accountLoggedIn.style.display = 'flex';
-        loggedInName.textContent = currentUsername;
-        forumNew.style.display = 'block';
-        forumLoginHint.style.display = 'none';
-      } else {
-        navAuth.innerHTML = '<a href="#account">Log In</a>';
-        accountTabsWrap.style.display = 'flex';
-        accountLoggedIn.style.display = 'none';
-        var activeTab = document.querySelector('.account-tab.active');
-        var tab = activeTab ? activeTab.getAttribute('data-tab') : 'register';
-        form.style.display = (tab === 'register') ? 'flex' : 'none';
-        loginForm.style.display = (tab === 'login') ? 'flex' : 'none';
-        forumNew.style.display = 'none';
-        forumLoginHint.style.display = 'block';
-      }
-    }
-
-    var logoutBtn = document.getElementById('account-logout-btn');
-    if(logoutBtn){ logoutBtn.addEventListener('click', function(){ signOut(auth); }); }
-
-    onAuthStateChanged(auth, function(user){
-      currentUser = user;
-      if(user){
-        getDoc(doc(db, 'accounts', user.uid)).then(function(snap){
-          currentUsername = (snap.exists() && snap.data().username) ? snap.data().username : 'Immortal';
-          renderAuthUI();
-        }).catch(function(){ renderAuthUI(); });
-      } else {
-        currentUsername = 'Immortal';
-        renderAuthUI();
-      }
-    });
-
-    // ---------- forum ----------
-    var forumList = document.getElementById('forum-list');
-    var forumEmpty = document.getElementById('forum-empty');
-    var forumThreadForm = document.getElementById('forum-thread-form');
-    var forumThreadMsg = document.getElementById('forum-thread-msg');
-    var htmlEscapes = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
-
-    function escapeHtml(s){
-      return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return htmlEscapes[c]; });
-    }
-
-    function formatDate(ts){
-      try{
-        var d = ts && ts.toDate ? ts.toDate() : null;
-        if(!d) return '';
-        return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
-      }catch(e){ return ''; }
-    }
-
-    function loadReplies(threadId, container){
-      container.innerHTML = '<p class="forum-loading">Loading replies…</p>';
-      var repliesRef = collection(db, 'forumThreads', threadId, 'replies');
-      getDocs(query(repliesRef, orderBy('createdAt', 'asc'))).then(function(snap){
-        if(snap.empty){
-          container.innerHTML = '<p class="forum-loading">No replies yet — be the first.</p>';
-          return;
+  if(loginForm){
+    loginForm.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      var email = loginForm.email.value.trim();
+      var password = loginForm.password.value;
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Logging in …';
+      api('POST', '/api/auth/login', {email: email, password: password}).then(function(reply){
+        signedIn(reply.user, reply.token);
+        showLoginMsg('Logged in!', 'success');
+        loginForm.reset();
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Log In';
+      }).catch(function(err){
+        var code = err && err.code;
+        if(code === 'wrong_credentials'){
+          showLoginMsg('Wrong email or password.', 'error');
+        } else if(err && err.status === 429){
+          showLoginMsg('Too many attempts. Please wait a minute and try again.', 'error');
+        } else {
+          showLoginMsg('Login isn’t possible right now. Please try again later.', 'error');
         }
-        var html = '';
-        snap.forEach(function(d){
-          var r = d.data();
-          html += '<div class="forum-reply"><div class="fr-meta">' + escapeHtml(r.authorName || 'Immortal') + ' · ' + formatDate(r.createdAt) + '</div><div class="fr-body">' + escapeHtml(r.body) + '</div></div>';
-        });
-        container.innerHTML = html;
-      }).catch(function(){
-        container.innerHTML = '<p class="forum-loading">Couldn’t load replies.</p>';
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Log In';
       });
-    }
+    });
+  }
 
-    var forumExpanded = false;
-    var forumDocsCache = [];
-    var FORUM_PREVIEW_COUNT = 5;
+  // ---------- account tabs ----------
+  var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.account-tab'));
+  tabButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabButtons.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var tab = btn.getAttribute('data-tab');
+      form.style.display = (tab === 'register') ? 'flex' : 'none';
+      loginForm.style.display = (tab === 'login') ? 'flex' : 'none';
+    });
+  });
 
-    function buildThreadEl(d){
-      var t = d.data();
-      var id = d.id;
-      var details = document.createElement('details');
-      details.className = 'forum-thread' + (t.pinned ? ' pinned' : '');
-      details.innerHTML =
-        '<summary><span class="ft-title">' + (t.pinned ? '<span class="ft-pin">📌 Pinned</span> ' : '') + escapeHtml(t.title) + '</span>' +
-        '<span class="ft-meta">by ' + escapeHtml(t.authorName || 'Immortal') + ' · ' + formatDate(t.createdAt) + '</span></summary>' +
-        '<div class="forum-thread-body">' +
-          '<p class="ft-post">' + escapeHtml(t.body) + '</p>' +
-          '<div class="forum-replies"><p class="forum-loading">Loading replies…</p></div>' +
-          (currentUser
-            ? '<form class="forum-reply-form"><textarea rows="2" maxlength="2000" placeholder="Write a reply…" required></textarea><button class="btn btn-ghost" type="submit">Reply</button></form>'
-            : '<p class="forum-login-hint-inline">Log in above to reply.</p>') +
-        '</div>';
+  // ---------- global auth UI ----------
+  var navAuth = document.getElementById('nav-auth');
+  var accountLoggedIn = document.getElementById('account-loggedin');
+  var accountTabsWrap = document.getElementById('account-tabs');
+  var loggedInName = document.getElementById('loggedin-name');
+  var forumNew = document.getElementById('forum-new');
+  var forumLoginHint = document.getElementById('forum-login-hint');
 
-      var loaded = false;
-      details.addEventListener('toggle', function(){
-        if(details.open && !loaded){
-          loaded = true;
-          loadReplies(id, details.querySelector('.forum-replies'));
-        }
-      });
-
-      var replyForm = details.querySelector('.forum-reply-form');
-      if(replyForm){
-        replyForm.addEventListener('submit', function(ev){
-          ev.preventDefault();
-          if(!currentUser) return;
-          var textarea = replyForm.querySelector('textarea');
-          var body = textarea.value.trim();
-          if(!body) return;
-          var replyBtn = replyForm.querySelector('button');
-          replyBtn.disabled = true;
-          addDoc(collection(db, 'forumThreads', id, 'replies'), {
-            body: body,
-            authorUid: currentUser.uid,
-            authorName: currentUsername,
-            createdAt: serverTimestamp()
-          }).then(function(){
-            textarea.value = '';
-            replyBtn.disabled = false;
-            loadReplies(id, details.querySelector('.forum-replies'));
-          }).catch(function(){
-            replyBtn.disabled = false;
-            alert('Could not post reply. Please try again.');
-          });
-        });
-      }
-
-      return details;
-    }
-
-    function renderThreadList(){
-      forumList.innerHTML = '';
-      if(forumDocsCache.length === 0){
-        forumEmpty.textContent = 'No threads yet — start the first one!';
-        forumList.appendChild(forumEmpty);
-        return;
-      }
-      var visible = forumExpanded ? forumDocsCache : forumDocsCache.slice(0, FORUM_PREVIEW_COUNT);
-      visible.forEach(function(d){
-        forumList.appendChild(buildThreadEl(d));
-      });
-      if(forumDocsCache.length > FORUM_PREVIEW_COUNT){
-        var toggleWrap = document.createElement('div');
-        toggleWrap.className = 'forum-toggle-wrap';
-        var toggleBtn = document.createElement('button');
-        toggleBtn.type = 'button';
-        toggleBtn.className = 'btn btn-ghost';
-        toggleBtn.textContent = forumExpanded ? 'Show Fewer Threads' : 'Show All Threads (' + forumDocsCache.length + ')';
-        toggleBtn.addEventListener('click', function(){
-          forumExpanded = !forumExpanded;
-          renderThreadList();
-        });
-        toggleWrap.appendChild(toggleBtn);
-        forumList.appendChild(toggleWrap);
-      }
-    }
-
-    function renderThreads(snap){
-      var docs = [];
-      snap.forEach(function(d){ docs.push(d); });
-      docs.sort(function(a, b){
-        var pa = a.data().pinned ? 1 : 0;
-        var pb = b.data().pinned ? 1 : 0;
-        return pb - pa; // pinned threads first, otherwise keep createdAt-desc order from the query
-      });
-      forumDocsCache = docs;
-      renderThreadList();
-    }
-
-    try{
-      onSnapshot(query(collection(db, 'forumThreads'), orderBy('createdAt', 'desc'), limit(50)), renderThreads, function(){
-        forumEmpty.textContent = 'Couldn’t load the forum right now.';
-      });
-    }catch(e){}
-
-    if(forumThreadForm){
-      forumThreadForm.addEventListener('submit', function(ev){
-        ev.preventDefault();
-        if(!currentUser) return;
-        var title = document.getElementById('ft-title').value.trim();
-        var body = document.getElementById('ft-body').value.trim();
-        if(!title || !body) return;
-        var threadBtn = forumThreadForm.querySelector('button[type="submit"]');
-        threadBtn.disabled = true;
-        threadBtn.textContent = 'Posting …';
-        addDoc(collection(db, 'forumThreads'), {
-          title: title,
-          body: body,
-          authorUid: currentUser.uid,
-          authorName: currentUsername,
-          createdAt: serverTimestamp()
-        }).then(function(){
-          forumThreadForm.reset();
-          forumThreadMsg.textContent = 'Thread posted!';
-          forumThreadMsg.className = 'form-msg show success';
-          threadBtn.disabled = false;
-          threadBtn.textContent = 'Post Thread';
-        }).catch(function(){
-          forumThreadMsg.textContent = 'Could not post your thread. Please try again.';
-          forumThreadMsg.className = 'form-msg show error';
-          threadBtn.disabled = false;
-          threadBtn.textContent = 'Post Thread';
-        });
-      });
+  function renderAuthUI(){
+    if(currentUser){
+      navAuth.innerHTML = 'Hi, <strong>' + escapeHtml(currentUsername) + '</strong> <button type="button" id="nav-logout-btn">Log Out</button>';
+      var navLogoutBtn = document.getElementById('nav-logout-btn');
+      if(navLogoutBtn){ navLogoutBtn.addEventListener('click', signOut); }
+      accountTabsWrap.style.display = 'none';
+      form.style.display = 'none';
+      loginForm.style.display = 'none';
+      accountLoggedIn.style.display = 'flex';
+      loggedInName.textContent = currentUsername;
+      forumNew.style.display = 'block';
+      forumLoginHint.style.display = 'none';
+    } else {
+      navAuth.innerHTML = '<a href="#account">Log In</a>';
+      accountTabsWrap.style.display = 'flex';
+      accountLoggedIn.style.display = 'none';
+      var activeTab = document.querySelector('.account-tab.active');
+      var tab = activeTab ? activeTab.getAttribute('data-tab') : 'register';
+      form.style.display = (tab === 'register') ? 'flex' : 'none';
+      loginForm.style.display = (tab === 'login') ? 'flex' : 'none';
+      forumNew.style.display = 'none';
+      forumLoginHint.style.display = 'block';
     }
   }
+
+  var logoutBtn = document.getElementById('account-logout-btn');
+  if(logoutBtn){ logoutBtn.addEventListener('click', signOut); }
+
+  // ---------- forum ----------
+  var forumList = document.getElementById('forum-list');
+  var forumEmpty = document.getElementById('forum-empty');
+  var forumThreadForm = document.getElementById('forum-thread-form');
+  var forumThreadMsg = document.getElementById('forum-thread-msg');
+
+  function formatDate(iso){
+    try{
+      var d = iso ? new Date(iso) : null;
+      if(!d || isNaN(d.getTime())) return '';
+      return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+    }catch(e){ return ''; }
+  }
+
+  function loadReplies(threadId, container){
+    container.innerHTML = '<p class="forum-loading">Loading replies…</p>';
+    api('GET', '/api/forum/threads/' + encodeURIComponent(threadId) + '/replies').then(function(replies){
+      if(!replies || replies.length === 0){
+        container.innerHTML = '<p class="forum-loading">No replies yet — be the first.</p>';
+        return;
+      }
+      var html = '';
+      replies.forEach(function(r){
+        html += '<div class="forum-reply"><div class="fr-meta">' + escapeHtml(r.author_name || 'Immortal') + ' · ' + formatDate(r.created_at) + '</div><div class="fr-body">' + escapeHtml(r.body) + '</div></div>';
+      });
+      container.innerHTML = html;
+    }).catch(function(){
+      container.innerHTML = '<p class="forum-loading">Couldn’t load replies.</p>';
+    });
+  }
+
+  var forumExpanded = false;
+  var forumThreadsCache = [];
+  var FORUM_PREVIEW_COUNT = 5;
+
+  function buildThreadEl(t){
+    var id = t.id;
+    var details = document.createElement('details');
+    details.className = 'forum-thread' + (t.pinned ? ' pinned' : '');
+    details.innerHTML =
+      '<summary><span class="ft-title">' + (t.pinned ? '<span class="ft-pin">📌 Pinned</span> ' : '') + escapeHtml(t.title) + '</span>' +
+      '<span class="ft-meta">by ' + escapeHtml(t.author_name || 'Immortal') + ' · ' + formatDate(t.created_at) + '</span></summary>' +
+      '<div class="forum-thread-body">' +
+        '<p class="ft-post">' + escapeHtml(t.body) + '</p>' +
+        '<div class="forum-replies"><p class="forum-loading">Loading replies…</p></div>' +
+        (currentUser
+          ? '<form class="forum-reply-form"><textarea rows="2" maxlength="2000" placeholder="Write a reply…" required></textarea><button class="btn btn-ghost" type="submit">Reply</button></form>'
+          : '<p class="forum-login-hint-inline">Log in above to reply.</p>') +
+      '</div>';
+
+    var loaded = false;
+    details.addEventListener('toggle', function(){
+      if(details.open && !loaded){
+        loaded = true;
+        loadReplies(id, details.querySelector('.forum-replies'));
+      }
+    });
+
+    var replyForm = details.querySelector('.forum-reply-form');
+    if(replyForm){
+      replyForm.addEventListener('submit', function(ev){
+        ev.preventDefault();
+        if(!currentUser) return;
+        var textarea = replyForm.querySelector('textarea');
+        var body = textarea.value.trim();
+        if(!body) return;
+        var replyBtn = replyForm.querySelector('button');
+        replyBtn.disabled = true;
+        api('POST', '/api/forum/threads/' + encodeURIComponent(id) + '/replies', {body: body}).then(function(){
+          textarea.value = '';
+          replyBtn.disabled = false;
+          loadReplies(id, details.querySelector('.forum-replies'));
+        }).catch(function(err){
+          replyBtn.disabled = false;
+          alert(err && err.status === 401 ? 'Please log in again to reply.' : 'Could not post reply. Please try again.');
+        });
+      });
+    }
+
+    return details;
+  }
+
+  function renderThreadList(){
+    forumList.innerHTML = '';
+    if(forumThreadsCache.length === 0){
+      forumEmpty.textContent = 'No threads yet — start the first one!';
+      forumList.appendChild(forumEmpty);
+      return;
+    }
+    var visible = forumExpanded ? forumThreadsCache : forumThreadsCache.slice(0, FORUM_PREVIEW_COUNT);
+    visible.forEach(function(t){
+      forumList.appendChild(buildThreadEl(t));
+    });
+    if(forumThreadsCache.length > FORUM_PREVIEW_COUNT){
+      var toggleWrap = document.createElement('div');
+      toggleWrap.className = 'forum-toggle-wrap';
+      var toggleBtn = document.createElement('button');
+      toggleBtn.type = 'button';
+      toggleBtn.className = 'btn btn-ghost';
+      toggleBtn.textContent = forumExpanded ? 'Show Fewer Threads' : 'Show All Threads (' + forumThreadsCache.length + ')';
+      toggleBtn.addEventListener('click', function(){
+        forumExpanded = !forumExpanded;
+        renderThreadList();
+      });
+      toggleWrap.appendChild(toggleBtn);
+      forumList.appendChild(toggleWrap);
+    }
+  }
+
+  function loadThreads(){
+    // The server sends pinned threads first, then the newest.
+    return api('GET', '/api/forum/threads').then(function(threads){
+      forumThreadsCache = threads || [];
+      renderThreadList();
+    }).catch(function(){
+      forumEmpty.textContent = 'Couldn’t load the forum right now.';
+    });
+  }
+
+  if(forumThreadForm){
+    forumThreadForm.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      if(!currentUser) return;
+      var title = document.getElementById('ft-title').value.trim();
+      var body = document.getElementById('ft-body').value.trim();
+      if(!title || !body) return;
+      var threadBtn = forumThreadForm.querySelector('button[type="submit"]');
+      threadBtn.disabled = true;
+      threadBtn.textContent = 'Posting …';
+      api('POST', '/api/forum/threads', {title: title, body: body}).then(function(){
+        forumThreadForm.reset();
+        forumThreadMsg.textContent = 'Thread posted!';
+        forumThreadMsg.className = 'form-msg show success';
+        threadBtn.disabled = false;
+        threadBtn.textContent = 'Post Thread';
+        loadThreads();
+      }).catch(function(err){
+        forumThreadMsg.textContent = (err && err.status === 401) ? 'Please log in again to post.' : 'Could not post your thread. Please try again.';
+        forumThreadMsg.className = 'form-msg show error';
+        threadBtn.disabled = false;
+        threadBtn.textContent = 'Post Thread';
+      });
+    });
+  }
+
+  // ---------- start ----------
+  renderAuthUI();
+  loadThreads();
+  if(getToken()){
+    api('GET', '/api/auth/me').then(function(user){ signedIn(user); }).catch(function(err){
+      if(err && err.status === 401){ setToken(null); }
+    });
+  }
+})();
 </script>
 
 </body>
