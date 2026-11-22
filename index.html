@@ -1012,6 +1012,32 @@
           </div>
           <div class="form-msg" id="login-msg"></div>
           <button class="btn btn-primary" type="submit" id="login-btn" style="justify-content:center;">Log In</button>
+          <a href="#account" class="field-hint" id="forgot-link" style="text-align:center;">Forgot your password?</a>
+        </form>
+
+        <form class="register" id="forgot-form" style="display:none;">
+          <p class="field-hint">Enter the email address of your account. We'll send you a link to choose a new password.</p>
+          <div class="field">
+            <label for="fp-email">Email</label>
+            <input id="fp-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-msg" id="forgot-msg"></div>
+          <button class="btn btn-primary" type="submit" id="forgot-btn" style="justify-content:center;">Send Reset Link</button>
+          <a href="#account" class="field-hint" id="forgot-back" style="text-align:center;">Back to log in</a>
+        </form>
+
+        <form class="register" id="reset-form" style="display:none;">
+          <p class="field-hint">Choose a new password for your account.</p>
+          <div class="field">
+            <label for="rp-password">New password</label>
+            <input id="rp-password" name="password" type="password" autocomplete="new-password" minlength="6" placeholder="At least 6 characters" required>
+          </div>
+          <div class="field">
+            <label for="rp-password2">Repeat new password</label>
+            <input id="rp-password2" name="password2" type="password" autocomplete="new-password" minlength="6" required>
+          </div>
+          <div class="form-msg" id="reset-msg"></div>
+          <button class="btn btn-primary" type="submit" id="reset-btn" style="justify-content:center;">Save New Password</button>
         </form>
 
         <div class="account-loggedin" id="account-loggedin" style="display:none;">
@@ -1855,9 +1881,85 @@
       tabButtons.forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       var tab = btn.getAttribute('data-tab');
+      hideExtraForms();
       form.style.display = (tab === 'register') ? 'flex' : 'none';
       loginForm.style.display = (tab === 'login') ? 'flex' : 'none';
     });
+  });
+
+  // ---------- forgotten password ----------
+  var forgotForm = document.getElementById('forgot-form');
+  var forgotMsg = document.getElementById('forgot-msg');
+  var forgotBtn = document.getElementById('forgot-btn');
+  var resetForm = document.getElementById('reset-form');
+  var resetMsg = document.getElementById('reset-msg');
+  var resetBtn = document.getElementById('reset-btn');
+  var resetToken = null;
+
+  function hideExtraForms(){
+    forgotForm.style.display = 'none';
+    resetForm.style.display = 'none';
+  }
+
+  function showOnly(el){
+    form.style.display = 'none';
+    loginForm.style.display = 'none';
+    hideExtraForms();
+    el.style.display = 'flex';
+  }
+
+  function setMsg(el, text, type){
+    el.textContent = text;
+    el.className = 'form-msg show ' + type;
+  }
+
+  document.getElementById('forgot-link').addEventListener('click', function(ev){
+    ev.preventDefault();
+    showOnly(forgotForm);
+  });
+  document.getElementById('forgot-back').addEventListener('click', function(ev){
+    ev.preventDefault();
+    showOnly(loginForm);
+  });
+
+  forgotForm.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var email = forgotForm.email.value.trim();
+    forgotBtn.disabled = true;
+    api('POST', '/api/auth/password-reset', {email: email}).then(function(){
+      setMsg(forgotMsg, 'If an account exists for this address, an email with a reset link is on its way. Check your spam folder too.', 'success');
+      forgotForm.reset();
+    }).catch(function(err){
+      if(err && err.status === 429){
+        setMsg(forgotMsg, 'Too many attempts. Please wait a minute and try again.', 'error');
+      } else if(err && err.code === 'reset_unavailable'){
+        setMsg(forgotMsg, 'Password reset isn’t available right now. Please ask on our Discord.', 'error');
+      } else {
+        setMsg(forgotMsg, 'That didn’t work. Please try again later.', 'error');
+      }
+    }).then(function(){ forgotBtn.disabled = false; });
+  });
+
+  resetForm.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var password = resetForm.password.value;
+    if(password.length < 6){ setMsg(resetMsg, 'Password must be at least 6 characters long.', 'error'); return; }
+    if(password !== resetForm.password2.value){ setMsg(resetMsg, 'Passwords don’t match.', 'error'); return; }
+    resetBtn.disabled = true;
+    api('POST', '/api/auth/password-reset/confirm', {token: resetToken, password: password}).then(function(reply){
+      resetToken = null;
+      try{ history.replaceState(null, '', location.pathname + location.search + '#account'); }catch(e){}
+      resetForm.reset();
+      hideExtraForms();
+      signedIn(reply.user, reply.token);
+      setMsg(loginMsg, 'Your new password is saved and you’re logged in.', 'success');
+    }).catch(function(err){
+      if(err && err.code === 'reset_invalid'){
+        setMsg(resetMsg, 'This reset link is invalid or has expired. Please request a new one.', 'error');
+      } else {
+        setMsg(resetMsg, 'That didn’t work. Please try again later.', 'error');
+      }
+    }).then(function(){ resetBtn.disabled = false; });
   });
 
   // ---------- global auth UI ----------
@@ -1869,6 +1971,7 @@
   var forumLoginHint = document.getElementById('forum-login-hint');
 
   function renderAuthUI(){
+    if(resetToken){ return; }
     if(currentUser){
       navAuth.innerHTML = 'Hi, <strong>' + escapeHtml(currentUsername) + '</strong> <button type="button" id="nav-logout-btn">Log Out</button>';
       var navLogoutBtn = document.getElementById('nav-logout-btn');
@@ -1876,6 +1979,7 @@
       accountTabsWrap.style.display = 'none';
       form.style.display = 'none';
       loginForm.style.display = 'none';
+      hideExtraForms();
       accountLoggedIn.style.display = 'flex';
       loggedInName.textContent = currentUsername;
       forumNew.style.display = 'block';
@@ -2042,6 +2146,15 @@
   }
 
   // ---------- start ----------
+  var resetMatch = /^#reset=([A-Za-z0-9_-]{43})$/.exec(location.hash || '');
+  if(resetMatch){
+    resetToken = resetMatch[1];
+    accountTabsWrap.style.display = 'none';
+    accountLoggedIn.style.display = 'none';
+    showOnly(resetForm);
+    var accountSection = document.getElementById('account');
+    if(accountSection){ setTimeout(function(){ accountSection.scrollIntoView(); }, 0); }
+  }
   renderAuthUI();
   loadThreads();
   if(getToken()){
